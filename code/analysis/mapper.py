@@ -101,12 +101,17 @@ def _map_with_groq(clean_input, target_competency, framework_data):
     client = Groq(api_key=key)
     
     # Truncate Context for Groq Aggressively (TPM Limit is ~12k tokens)
-    # Target: ~8k tokens max to be super safe. 
-    # 8k tokens ~= 32k chars TOTAL.
-    # Training Plan (~10k chars) + System Prompt (~2k) leaving ~20k chars for Context.
-    
+    # 1. Minify Training Plan (Full plan is ~16k tokens -> Reduce to ~1k)
     training_plan = framework_data.get('training_plan', [])
-    tp_str = json.dumps(training_plan, indent=0) 
+    tp_mini = []
+    for item in training_plan:
+        tp_mini.append({
+            "code": item.get("competency_code", ""),
+            "name": item.get("competency_name", ""),
+            "desc": (item.get("behavioral_indicators") or "")[:200]
+        })
+    tp_str = json.dumps(tp_mini, separators=(',', ':'))
+ 
     
     web_content = ""
     for k, v in framework_data.get('web_content', {}).items():
