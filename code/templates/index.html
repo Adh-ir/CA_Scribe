@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAICA Scribe</title>
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .markdown-body h1 {
+            @apply text-2xl font-bold mt-4 mb-2;
+        }
+
+        .markdown-body h2 {
+            @apply text-xl font-bold mt-3 mb-2;
+        }
+
+        .markdown-body h3 {
+            @apply text-lg font-semibold mt-3 mb-1;
+        }
+
+        .markdown-body p {
+            @apply mb-2 leading-relaxed;
+        }
+
+        .markdown-body blockquote {
+            @apply border-l-4 border-blue-500 pl-4 py-1 my-2 bg-blue-50 rounded-r;
+        }
+
+        /* Alert styles mirroring GitHub alerts */
+        blockquote p {
+            font-weight: 500;
+        }
+
+        /* Modal Animation */
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+
+        .modal-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .modal-hidden .modal-content {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 to-slate-300 min-h-screen text-slate-800 flex flex-col">
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl flex-grow">
+        <header class="mb-8 flex justify-between items-center">
+            <div>
+                <h1
+                    class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                    SAICA Scribe
+                </h1>
+                <p class="text-slate-500 mt-1">AI-Powered Competency Mapper</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="openSettings()"
+                    class="text-sm font-medium text-slate-500 hover:text-blue-600 bg-white/50 px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-200 transition flex items-center gap-2">
+                    <span id="statusDot" class="w-2 h-2 rounded-full bg-red-400"></span>
+                    Settings
+                </button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Panel: Input -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Prompt Helper Button -->
+                <button onclick="insertPromptTemplate()"
+                    class="w-full text-left bg-gradient-to-r from-blue-500 to-indigo-600 hover:to-indigo-700 text-white p-4 rounded-xl shadow-lg transition transform hover:scale-[1.02] group">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold">🎯 Target Individual Competency</span>
+                        <span class="opacity-75 group-hover:opacity-100 transition">+</span>
+                    </div>
+                    <p class="text-xs text-blue-100 mt-1">Click to auto-fill keyword template</p>
+                </button>
+
+                <div class="glass-panel rounded-2xl p-6 shadow-xl">
+                    <form id="mappingForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">My Activity</label>
+                            <textarea id="activityInput" name="activity" rows="8"
+                                class="w-full rounded-xl border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition p-4 text-sm"
+                                placeholder="Describe your activity... e.g. 'I managed the inventory count for the client...'"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">AI Model</label>
+                                <select id="providerSelect" name="provider"
+                                    class="w-full rounded-xl border-slate-200 bg-white/50 p-2.5 text-sm font-medium">
+                                    <option value="gemini" selected>✨ Gemini 1.5 Flash</option>
+                                    <option value="groq">⚡ Groq (Llama 3)</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit" id="submitBtn"
+                                    class="w-full bg-slate-800 hover:bg-black text-white font-bold py-2.5 px-4 rounded-xl transition duration-200 shadow-lg flex justify-center items-center gap-2">
+                                    <span>Generate Report</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M13.5 4.5l7.5 7.5-7.5 7.5m-15-7.5h22.5" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tips Panel -->
+                <div class="glass-panel rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-600 mb-3 uppercase tracking-wider">Tips for better results
+                    </h3>
+                    <ul class="text-xs text-slate-500 space-y-3">
+                        <li class="flex gap-2">
+                            <span><strong>Be Specific:</strong> Include details like Where, When, and Who.</span>
+                        </li>
+                        <li class="flex gap-2">
+                            <span><strong>Target Skills:</strong> Use the format
+                                <code>COMPETENCY: [Name of Competency] EVIDENCE: [Description of Evidence]</code> to
+                                focus on specific areas.</span>
+                        </li>
+                        <li class="flex gap-2">
+                            <span><strong>Search Scope:</strong> If no competency is specified, Gemini will
+                                automatically search the full training plan.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panel: Output -->
+            <div class="lg:col-span-7 flex flex-col">
+                <div class="glass-panel rounded-2xl p-6 shadow-xl h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
+                        <h2 class="text-lg font-bold text-slate-700">Assessment Report</h2>
+                        <button id="copyBtn"
+                            class="hidden text-xs font-bold text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition uppercase tracking-wide">
+                            Copy Markdown
+                        </button>
+                    </div>
+
+                    <div id="loadingIndicator"
+                        class="hidden flex-1 flex flex-col items-center justify-center text-slate-400">
+                        <svg class="animate-spin h-10 w-10 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <p class="animate-pulse">Analyzing Training Plan...</p>
+                    </div>
+
+                    <div id="outputContent" class="markdown-body text-sm overflow-y-auto max-h-[700px] pr-2 flex-grow">
+                        <div class="text-center text-slate-400 mt-20">
+                            <p>Result will appear here.</p>
+                        </div>
+                    </div>
+
+                    <!-- Disclaimer -->
+                    <div class="mt-4 pt-4 border-t border-slate-200 text-center">
+                        <p class="text-[10px] text-slate-400 font-medium">
+                            This is an open source LLM model which can be prone to mistakes. Please review output
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer with Branding -->
+    <footer class="mt-8 py-6 text-center text-sm text-slate-400 border-t border-slate-200 bg-slate-50/50">
+        <p class="mb-2">Made by <strong>Adhir Singh</strong></p>
+        <div class="flex justify-center gap-4">
+            <a href="https://github.com/Adh-ir" target="_blank"
+                class="hover:text-blue-500 transition flex items-center gap-1">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                        clip-rule="evenodd" />
+                </svg>
+                GitHub
+            </a>
+            <a href="https://www.linkedin.com/in/adhirs/" target="_blank"
+                class="hover:text-blue-500 transition flex items-center gap-1">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                        clip-rule="evenodd" />
+                </svg>
+                LinkedIn
+            </a>
+        </div>
+    </footer>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal"
+        class="modal modal-hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4">API Configuration</h3>
+            <form id="settingsForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Gemini Key</label>
+                    <input type="password" name="google_key" placeholder="Starts with AIza..."
+                        class="w-full text-sm font-mono border border-slate-300 rounded-lg p-2.5">
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank"
+                        class="text-xs text-blue-500 hover:underline">Get Key ↗</a>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Groq Key</label>
+                    <input type="password" name="groq_key" placeholder="Starts with gsk_..."
+                        class="w-full text-sm font-mono border border-slate-300 rounded-lg p-2.5">
+                    <a href="https://console.groq.com/keys" target="_blank"
+                        class="text-xs text-blue-500 hover:underline">Get Key ↗</a>
+                </div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" onclick="closeSettings()"
+                        class="px-4 py-2 rounded-lg text-slate-500 hover:bg-slate-100">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-bold">Save
+                        Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Main App Logic
+        const form = document.getElementById('mappingForm');
+        const outputDiv = document.getElementById('outputContent');
+        const loadingDiv = document.getElementById('loadingIndicator');
+        const copyBtn = document.getElementById('copyBtn');
+        const statusDot = document.getElementById('statusDot');
+        let currentMarkdown = "";
+
+        // Status Check
+        async function checkStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+
+                // Green if ANY key is configured
+                if (data.google_configured || data.groq_configured) {
+                    statusDot.classList.remove('bg-red-400');
+                    statusDot.classList.add('bg-green-400');
+                } else {
+                    statusDot.classList.remove('bg-green-400');
+                    statusDot.classList.add('bg-red-400');
+                }
+            } catch (e) {
+                console.error("Status check failed", e);
+            }
+        }
+        checkStatus();
+
+        // Prompt Helper
+        function insertPromptTemplate() {
+            const input = document.getElementById('activityInput');
+            input.value = "COMPETENCY: [Insert Name] EVIDENCE: " + input.value;
+            input.focus();
+        }
+
+        // Settings Modal
+        function openSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.remove('modal-hidden');
+        }
+        function closeSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.add('modal-hidden');
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            try {
+                const res = await fetch('/api/settings', { method: 'POST', body: formData });
+                if (res.ok) {
+                    alert("Settings saved!");
+                    closeSettings();
+                    checkStatus();
+                }
+            } catch (err) {
+                alert("Error saving settings");
+            }
+        });
+
+        // Close modal on click outside
+        document.getElementById('settingsModal').addEventListener('click', (e) => {
+            if (e.target.id === 'settingsModal') closeSettings();
+        });
+
+        // Map Submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            outputDiv.classList.add('hidden');
+            loadingDiv.classList.remove('hidden');
+            copyBtn.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/map', { method: 'POST', body: formData });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    // Handle FastAPI validation error list or simple message
+                    let msg = errData.message || errData.detail || "Server Error";
+                    if (typeof msg === 'object') {
+                        msg = JSON.stringify(msg, null, 2);
+                    }
+                    throw new Error(msg);
+                }
+
+                const data = await response.json();
+
+                if (!data.markdown_report) {
+                    throw new Error("No report generated. Please check your inputs.");
+                }
+
+                currentMarkdown = data.markdown_report;
+
+                outputDiv.innerHTML = marked.parse(currentMarkdown);
+                loadingDiv.classList.add('hidden');
+                outputDiv.classList.remove('hidden');
+                copyBtn.classList.remove('hidden');
+
+            } catch (error) {
+                console.error(error);
+                loadingDiv.classList.add('hidden');
+                outputDiv.classList.remove('hidden');
+                outputDiv.innerHTML = `<div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <p class="font-bold text-red-700">Error</p>
+                    <p class="text-red-600 text-sm">${error.message}</p>
+                </div>`;
+            }
+        });
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(currentMarkdown);
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "Copied!";
+            setTimeout(() => copyBtn.innerText = originalText, 2000);
+        });
+    </script>
+</body>
+
+</html>

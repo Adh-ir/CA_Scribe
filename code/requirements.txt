@@ -1,0 +1,13 @@
+requests
+beautifulsoup4
+pandas
+openpyxl
+google-genai
+pypdf
+groq
+fastapi
+uvicorn
+python-multipart
+python-dotenv
+python-docx
+jinja2
