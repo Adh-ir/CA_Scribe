@@ -106,8 +106,8 @@ def _map_with_groq(clean_input, target_competency, framework_data):
     tp_mini = []
     for item in training_plan:
         tp_mini.append({
-            "code": item.get("competency_code", ""),
-            "name": item.get("competency_name", ""),
+            "competency_code": item.get("competency_code", ""),
+            "name": item.get("competency_name", ""), # Map competency_name to name for consistency with prompt
             "desc": (item.get("behavioral_indicators") or "")[:200]
         })
     tp_str = json.dumps(tp_mini, separators=(',', ':'))
@@ -204,10 +204,23 @@ def _parse_json_response(text):
             text = text.strip()
             
         data = json.loads(text)
-        if "mappings" in data: return data["mappings"]
-        if isinstance(data, list): return data
-        if "competency_code" in data: return [data]
-        return []
+        
+        # Normalize Keys (Self-Healing)
+        # Handle case where LLM outputs 'code' instead of 'competency_code'
+        def normalize_item(item):
+            if not isinstance(item, dict): return item
+            if "code" in item and "competency_code" not in item:
+                item["competency_code"] = item["code"]
+            if "competency_name" in item and "name" not in item:
+                item["name"] = item["competency_name"]
+            return item
+
+        raw_list = []
+        if "mappings" in data: raw_list = data["mappings"]
+        elif isinstance(data, list): raw_list = data
+        elif "competency_code" in data or "code" in data: raw_list = [data]
+        
+        return [normalize_item(i) for i in raw_list]
     except Exception as e:
         logger.error(f"JSON Parsing failed: {e}. Raw text: {text[:100]}...")
         return []
