@@ -33,8 +33,24 @@ def load_training_plan(file_path):
             
             code = f"{comp_id}{outcome}"
             
-            name = str(row.get('Unnamed: 4') or row.get('Unnamed: 2') or 'Unknown').strip()
-            desc = str(row.get('Unnamed: 6') or '').strip()
+            # Clean Name
+            # Try Unnamed: 4 (Specific) -> Unnamed: 2 (Group) -> Code itself
+            raw_name_4 = row.get('Unnamed: 4')
+            raw_name_2 = row.get('Unnamed: 2')
+            
+            def clean_str(val):
+                if pd.isna(val): return ""
+                s = str(val).strip()
+                if s.lower() == 'nan': return ""
+                return s
+
+            name = clean_str(raw_name_4)
+            if not name:
+                name = clean_str(raw_name_2)
+            if not name:
+                name = f"Competency {code}" # Last resort fallback vs "Unknown"
+
+            desc = clean_str(row.get('Unnamed: 6'))
             
             clean_records.append({
                 "competency_code": code,
