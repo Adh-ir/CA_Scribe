@@ -34,6 +34,7 @@ if not exist ".venv" (
 :: 4. Activate & Install
 echo [Setup] Checking dependencies...
 call .venv\Scripts\activate.bat
+pip install -q pip-system-certs
 pip install -q -r requirements.txt
 
 :: 5. Launch

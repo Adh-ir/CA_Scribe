@@ -85,6 +85,7 @@ async def update_settings(
     """Updates API keys and provider settings."""
     try:
         save_keys(google_key, groq_key, provider)
+        load_dotenv(override=True) # Force reload of new keys
         
         # Reload framework data if this was first setup
         global framework_data
