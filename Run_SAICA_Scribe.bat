@@ -31,10 +31,31 @@ if %errorlevel% neq 0 (
     python --version >nul 2>&1
     if !errorlevel! neq 0 (
         echo.
-        echo [Failed] Automatic install failed. 
-        echo Please install Python manually from python.org containing "Add to PATH".
+    echo [Failed] Standard install failed. 
+    echo Attempting to install via Python Manager...
+    winget install 9NQ7512CXL7T
+    
+    :: Refresh & Check Again
+    call RefreshEnv.cmd >nul 2>&1
+    python --version >nul 2>&1
+    
+    if !errorlevel! neq 0 (
+        echo.
+        echo [Failed] All automatic installs failed/blocked.
+        echo Opening Python Manager download page...
+        start https://www.python.org/downloads/release/pymanager-252/
+        echo.
+        echo ========================================================
+        echo  MANUAL INSTALL REQUIRED
+        echo ========================================================
+        echo  1. The Python Manager website has opened.
+        echo  2. Download and run the installer.
+        echo  3. This modern tool usually bypasses admin blocks.
+        echo  4. Run this script again after installing.
+        echo ========================================================
         pause
         exit /b
+    )
     )
 )
 

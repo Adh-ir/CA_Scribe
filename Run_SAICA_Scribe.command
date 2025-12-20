@@ -47,13 +47,26 @@ else
     echo -e "${RED}Error: Python 3 not found.${NC}"
     echo "Attempting to download Python installer..."
     
-    # Download official installer
-    curl -o python_installer.pkg https://www.python.org/ftp/python/3.11.5/python-3.11.5-macos11.pkg
+    # Try to download
+    if curl -o python_installer.pkg https://www.python.org/ftp/python/3.11.5/python-3.11.5-macos11.pkg; then
+        echo "Opening installer..."
+        open python_installer.pkg
+        echo "⚠️  Please follow the installer steps."
+    else
+        echo "Download failed. Opening website..."
+        open "https://www.python.org/downloads/"
+    fi
+
+    echo ""
+    echo "========================================================"
+    echo " MANUAL INSTALL REQUIRED"
+    echo "========================================================"
+    echo " 1. Install Python from the window that opened."
+    echo " 2. During install, if prompted, ensure 'Add to PATH' is selected"
+    echo "    (Usually default on Mac)."
+    echo " 3. Run this script again when done."
+    echo "========================================================"
     
-    echo "Opening installer..."
-    open python_installer.pkg
-    
-    echo "⚠️  Please follow the installer steps, then run this file again."
     read -n 1 -s -r -p "Press any key to exit..."
     exit 1
 fi
