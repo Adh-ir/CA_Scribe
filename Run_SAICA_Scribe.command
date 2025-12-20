@@ -48,27 +48,37 @@ else
     echo "Attempting to download Python installer..."
     
     # Try to download
-    if curl -o python_installer.pkg https://www.python.org/ftp/python/3.11.5/python-3.11.5-macos11.pkg; then
+    echo "Downloading Python Installer..."
+    if curl -L -o python_installer.pkg https://www.python.org/ftp/python/3.11.5/python-3.11.5-macos11.pkg; then
+        echo "✅ Installer Downloaded."
         echo "Opening installer..."
         open python_installer.pkg
-        echo "⚠️  Please follow the installer steps."
+        
+        echo ""
+        echo "========================================================"
+        echo " INSTALLER LAUNCHED"
+        echo "========================================================"
+        echo " 1. The Python Installer has opened."
+        echo " 2. Follow the steps to install Python."
+        echo " 3. When finished, RESTART THIS SCRIPT."
+        echo "========================================================"
+        read -n 1 -s -r -p "Press any key to exit..."
+        exit 0
     else
-        echo "Download failed. Opening website..."
+        echo "❌ Download failed. Opening website..."
         open "https://www.python.org/downloads/"
+        
+        echo ""
+        echo "========================================================"
+        echo " MANUAL INSTALL REQUIRED"
+        echo "========================================================"
+        echo " 1. Install Python from the website that opened."
+        echo " 2. Run this script again when done."
+        echo "========================================================"
+        
+        read -n 1 -s -r -p "Press any key to exit..."
+        exit 1
     fi
-
-    echo ""
-    echo "========================================================"
-    echo " MANUAL INSTALL REQUIRED"
-    echo "========================================================"
-    echo " 1. Install Python from the window that opened."
-    echo " 2. During install, if prompted, ensure 'Add to PATH' is selected"
-    echo "    (Usually default on Mac)."
-    echo " 3. Run this script again when done."
-    echo "========================================================"
-    
-    read -n 1 -s -r -p "Press any key to exit..."
-    exit 1
 fi
 
 # 5. Virtual Environment (Hidden)
