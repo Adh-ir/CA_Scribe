@@ -41,7 +41,8 @@ def has_valid_keys():
     load_dotenv()
     google = os.getenv("GOOGLE_API_KEY")
     groq = os.getenv("GROQ_API_KEY")
-    return bool(google or groq)
+    github = os.getenv("GITHUB_TOKEN")
+    return bool(google or groq or github)
 
 @app.on_event("startup")
 async def startup_event():
@@ -66,6 +67,10 @@ async def setup_page(request: Request):
         return RedirectResponse(url="/")
     return templates.TemplateResponse("setup.html", {"request": request})
 
+@app.get("/guide", response_class=HTMLResponse)
+async def guide_page(request: Request):
+    return templates.TemplateResponse("guide.html", {"request": request})
+
 @app.get("/api/status")
 async def get_status():
     """Returns the current provider status."""
@@ -73,6 +78,7 @@ async def get_status():
     return {
         "google_configured": bool(os.getenv("GOOGLE_API_KEY")),
         "groq_configured": bool(os.getenv("GROQ_API_KEY")),
+        "github_configured": bool(os.getenv("GITHUB_TOKEN")),
         "current_provider": os.getenv("LLM_PROVIDER", "gemini")
     }
 
@@ -80,11 +86,19 @@ async def get_status():
 async def update_settings(
     google_key: str = Form(None),
     groq_key: str = Form(None),
+    github_key: str = Form(None),
+    github_model: str = Form(None),
     provider: str = Form(None)
 ):
     """Updates API keys and provider settings."""
     try:
-        save_keys(google_key, groq_key, provider)
+        save_keys(
+            google_key=google_key, 
+            groq_key=groq_key, 
+            github_key=github_key,
+            provider=provider,
+            github_model=github_model
+        )
         load_dotenv(override=True) # Force reload of new keys
         
         # Reload framework data if this was first setup

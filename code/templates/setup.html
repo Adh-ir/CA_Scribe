@@ -104,16 +104,42 @@
             placeholder="Paste Groq Key (starts with gsk_...)">
         </div>
 
-        <div class="text-xs text-slate-400 text-center">
-          Keys are stored locally in a .env file.
-        </div>
+        <!-- GitHub Section -->
+        <div class="bg-white/50 rounded-2xl p-5 border border-slate-200 hover:border-slate-400 transition">
+          <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+              <h3 class="font-bold text-slate-800">🐙 GitHub Models (OpenAI)</h3>
+              <span class="bg-gray-100 text-gray-700 text-xs font-bold px-2 py-0.5 rounded">New</span>
+            </div>
+            <a href="https://github.com/marketplace/models" target="_blank"
+              class="text-xs text-blue-600 hover:underline flex items-center gap-1">
+              Get Free Key or Account ↗
+            </a>
+          </div>
+          <div class="space-y-3">
+            <input type="password" id="githubKey" name="github_key"
+              class="w-full rounded-xl border-slate-300 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 p-3 font-mono text-sm"
+              placeholder="Paste GitHub Personal Access Token">
 
-        <button type="submit" id="submitBtn"
-          class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-xl transition transform active:scale-95 text-lg">
-          Connect & Launch 🚀
-        </button>
-      </form>
+            <p class="text-[10px] text-slate-500 ml-1">INFO: This uses OpenAI models hosted on Azure via GitHub.</p>
+          </div>
+          <div class="mt-2 text-right">
+            <a href="/guide" target="_blank" class="text-xs font-bold text-slate-500 hover:text-blue-600">Need Help?
+              View API Key Guide 📘</a>
+          </div>
+        </div>
     </div>
+
+    <div class="text-xs text-slate-400 text-center">
+      Keys are stored locally in a .env file.
+    </div>
+
+    <button type="submit" id="submitBtn"
+      class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-xl transition transform active:scale-95 text-lg">
+      Connect & Launch 🚀
+    </button>
+    </form>
+  </div>
   </div>
 
   <script>
@@ -146,8 +172,9 @@
       const btn = document.getElementById('submitBtn');
       const gKey = document.getElementById('geminiKey').value;
       const qKey = document.getElementById('groqKey').value;
+      const ghKey = document.getElementById('githubKey').value;
 
-      if (!gKey && !qKey) {
+      if (!gKey && !qKey && !ghKey) {
         alert("Please enter at least one API Key.");
         return;
       }
@@ -156,8 +183,12 @@
       btn.innerText = "Connecting...";
 
       const formData = new FormData(e.target);
-      // Default provider logic: Gemini if available, else Groq.
-      const provider = gKey ? 'gemini' : 'groq';
+      // Default provider logic
+      let provider = 'gemini';
+      if (ghKey) provider = 'github';
+      else if (qKey) provider = 'groq';
+      else if (gKey) provider = 'gemini';
+
       formData.append('provider', provider);
 
       try {

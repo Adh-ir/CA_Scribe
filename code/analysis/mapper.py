@@ -4,6 +4,7 @@ import json
 import re
 from google import genai
 from groq import Groq
+from openai import OpenAI
 from config import GEMINI_MODEL
 
 logger = logging.getLogger(__name__)
@@ -42,9 +43,19 @@ def map_activity_to_competency(trainee_input, framework_data, provider=None):
     for idx, item in enumerate(training_plan_raw):
          item['_original_index'] = idx
 
+    # Handle split providers
+    if provider.lower() in ["github_mini", "github_4o"]:
+        # Set transient env var or pass param? 
+        # Easier to check provider string in _map_with_github
+        if "mini" in provider.lower(): os.environ["GITHUB_MODEL"] = "gpt-4o-mini"
+        if "4o" in provider.lower() and "mini" not in provider.lower(): os.environ["GITHUB_MODEL"] = "gpt-4o"
+        provider = "github"
+
     try:
         if provider.lower() == "groq":
              mappings = _map_with_groq(clean_input, target_competency, framework_data)
+        elif provider.lower() == "github":
+             mappings = _map_with_github(clean_input, target_competency, framework_data)
         else:
              mappings = _map_with_gemini(clean_input, target_competency, framework_data)
              
@@ -142,6 +153,69 @@ def _map_with_groq(clean_input, target_competency, framework_data):
     )
     return _parse_json_response(chat_completion.choices[0].message.content)
 
+def _map_with_github(clean_input, target_competency, framework_data):
+    token = os.getenv("GITHUB_TOKEN")
+    model_name = os.getenv("GITHUB_MODEL", "gpt-4o-mini")
+    
+    if not token:
+        raise ValueError("GITHUB_TOKEN is missing.")
+
+    client = OpenAI(
+        base_url="https://models.inference.ai.azure.com",
+        api_key=token,
+    )
+    
+    # Use ultra-compact context preparation (Strict 8k Token Limit)
+    # 1. Minify Training Plan (List of Lists instead of dicts to save key overhead)
+    # Format: ["Code | Name | Desc"]
+    training_plan = framework_data.get('training_plan', [])
+    tp_mini = []
+    for item in training_plan:
+        code = item.get("competency_code", "")
+        name = item.get("competency_name", "")
+        desc = (item.get("behavioral_indicators") or "")[:100] # Cap description at 100 chars
+        tp_mini.append(f"{code} | {name} | {desc}")
+        
+    tp_str = json.dumps(tp_mini)
+    
+    web_content = ""
+    for k, v in framework_data.get('web_content', {}).items():
+        web_content += f"{v[:500]}\n" # Cap web content
+
+    # Context Truncation (Max 5000 chars ~1.2k tokens)
+    MAX_CONTEXT_CHARS = 5000
+    context_text = ""
+    current_chars = 0
+    for cat_name, cat_files in framework_data.get('additional_context', {}).items():
+        if current_chars >= MAX_CONTEXT_CHARS: break
+        context_text += f"=== Category: {cat_name} ===\n"
+        for fname, ftext in cat_files.items():
+            if current_chars >= MAX_CONTEXT_CHARS: break
+            snippet = ftext[:2000]
+            context_text += f"--- Document: {fname} ---\n{snippet}\n\n"
+            current_chars += len(snippet)
+    
+    prompt = _build_prompt(clean_input, target_competency, tp_str, context_text, web_content)
+    
+    logger.info(f"Sending request to GitHub Models ({model_name})... Payload optimized for 8k limit.")
+    
+    response = client.chat.completions.create(
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful assistant that outputs JSON.",
+            },
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        model=model_name,
+        response_format={"type": "json_object"}
+    )
+    
+    return _parse_json_response(response.choices[0].message.content)
+
 def _build_prompt(input_text, target, plan_json, context, web):
     return f"""
     **System Instruction / Prompt**
@@ -226,58 +300,82 @@ def _parse_json_response(text):
         return []
 
 def _post_process_mappings(mappings, training_plan, target_competency, original_input):
-    filtered = []
-    if not mappings: return get_mock_response(original_input)
-
-    for m in mappings:
-        conf = m.get('confidence', 0)
-        if conf <= 1.0: conf *= 100
-        
-        is_targeted = False
-        if target_competency:
-            # Fuzzy match target
-            t_toks = [t for t in re.split(r'[^a-zA-Z0-9]+', target_competency.lower()) if len(t)>=2]
-            name_code = (m.get('name','') + m.get('competency_code','')).lower()
-            for t in t_toks:
-                if t in name_code:
-                    is_targeted = True; break
-        
-        # Strict Filtering Logic
-        keep_item = False
-        
-        if target_competency:
-            # Exclusive Mode: Only keep if it matches the target
-            if is_targeted:
-                keep_item = True
-                if conf < 75: m['is_weak_target'] = True
-        else:
-            # Default Mode: Keep all high confidence matches
-            if conf >= 75:
-                keep_item = True
-                
-        if keep_item:
-            m['confidence'] = conf
-            filtered.append(m)
-            
     # Create authoritative lookup for names AND descriptions: Code -> {Name, Desc}
     code_lookup = {}
     for item in training_plan:
-        c = item.get('competency_code', '').strip().lower()
+        c = item.get('competency_code', '').replace(')', '').strip().lower()
         n = item.get('competency_name', '').strip()
         d = item.get('behavioral_indicators', '').strip()
         if c: code_lookup[c] = {"name": n, "desc": d}
         
-    for m in filtered:
-        # Force Correct Name & Description using Code
-        code_key = m.get('competency_code', '').strip().lower()
+    filtered = []
+    if not mappings: return get_mock_response(original_input)
+
+    # Strict Filtering Logic (Winner Takes All for Code)
+    exact_code_matches = []
+    fuzzy_matches = []
+
+    for m in mappings:
+        conf = m.get('confidence', 0)
+        if conf <= 1.0: conf *= 100
+        m['confidence'] = conf
+        
+        # Always normalize name/desc from lookup if possible
+        code_key = m.get('competency_code', '').replace(')', '').strip().lower()
         if code_key in code_lookup:
              lookup_data = code_lookup[code_key]
-             m['name'] = lookup_data['name'] # Override LLM hallucination
-             m['desc'] = lookup_data['desc'] # Inject authoritative description
-             
+             m['name'] = lookup_data['name']
+             m['desc'] = lookup_data['desc']
+        
+        m_code = m.get('competency_code', '').strip().lower()
+        m_name = m.get('name', '').strip().lower()
+
+        if target_competency:
+            t_clean = target_competency.strip().lower()
+            
+            # Robust Code Normalization (Remove all non-alphanumeric)
+            def normalize_code(s): return re.sub(r'[^a-z0-9]', '', s)
+            
+            t_simple = normalize_code(t_clean)
+            m_simple = normalize_code(m_code)
+
+            # 1. Exact Code Match (Robust)
+            if t_simple and t_simple == m_simple:
+                exact_code_matches.append(m)
+                continue
+            
+            # 2. Token Match
+            is_targeted = True
+            if not (len(t_clean) < 3 and any(c.isdigit() for c in t_clean)):
+                 t_toks = [t for t in re.split(r'[^a-zA-Z0-9]+', t_clean) if len(t)>=3]
+                 search_text = (m_name + " " + m_code).lower()
+                 if not t_toks: is_targeted = False
+                 for t in t_toks:
+                    if t not in search_text:
+                        is_targeted = False; break
+            else:
+                is_targeted = False
+                
+            if is_targeted:
+                fuzzy_matches.append(m)
+        else:
+            if conf >= 75:
+                filtered.append(m)
+                
+    if target_competency:
+        # Priority Logic: If EXACT Code match found, ignore fuzzy
+        if exact_code_matches:
+            filtered = exact_code_matches
+        else:
+            filtered = fuzzy_matches
+            # Mark weak if needed
+            for m in filtered:
+                 if m['confidence'] < 75: m['is_weak_target'] = True
+            
+    for m in filtered:
+        # Fallback sorting
         name = m.get('name', '').strip().lower()
         code = m.get('competency_code', '').strip().lower()
-        # Fallback sorting
         idx = float('inf')
         for item in training_plan:
             if item.get('competency_code','').lower() == code:
