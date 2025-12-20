@@ -83,6 +83,7 @@ source "$VENV_DIR/bin/activate"
 
 # 6. Install Dependencies
 echo -e "📦 checking dependencies..."
+pip install --upgrade pip >/dev/null 2>&1
 pip install -q -r requirements.txt
 
 # 7. Launch
