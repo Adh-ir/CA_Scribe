@@ -284,6 +284,14 @@ html, body, [class*="css"] {
     background-color: #ffffff !important;
 }
 
+/* TARGET SPECIFIC CONTAINERS IDENTIFIED BY USER */
+[data-testid="stVerticalBlockBorderWrapper"] [class*="stVerticalBlock"],
+[data-testid="stVerticalBlockBorderWrapper"] [class*="stHorizontalBlock"],
+[data-testid="stVerticalBlockBorderWrapper"] [class*="st-emotion-cache"] {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+}
+
 /* --- LOGO STYLES (From Local Index.html) --- */
 .logo-main {
     font-family: 'Inter', sans-serif;
