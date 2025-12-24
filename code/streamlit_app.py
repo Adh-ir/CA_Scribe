@@ -59,6 +59,27 @@ st.markdown("""
         margin-left: auto !important;
         margin-right: auto !important;
     }
+    
+    /* Remove blue flash/focus ring from entire container */
+    .block-container:focus,
+    .block-container:focus-within,
+    [data-testid="stAppViewContainer"]:focus,
+    [data-testid="stAppViewContainer"]:focus-within,
+    .main:focus,
+    .main:focus-within {
+        outline: none !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    /* Remove focus ring from all elements */
+    * {
+        outline: none !important;
+    }
+    *:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
