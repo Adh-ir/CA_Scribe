@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import sys
+from PIL import Image
 
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -11,12 +12,28 @@ from analysis.mapper import map_activity_to_competency
 from reporting.generator import generate_markdown_content
 
 # --- 1. CONFIG & STATE ---
+try:
+    favicon = Image.open(os.path.join(os.path.dirname(__file__), "static", "favicon.png"))
+except Exception:
+    favicon = "static/favicon.png" # Fallback
+
 st.set_page_config(
     page_title="CA Scribe",
-    page_icon="code/static/favicon.png",
+    page_icon=favicon,
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# Force global styles immediately
+st.markdown("""
+    <style>
+    /* Force Transparent Background always */
+    .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 if "framework_data" not in st.session_state:
     st.session_state.framework_data = None
@@ -151,36 +168,29 @@ def show_setup_page():
 
 # --- 4. UI: MAIN PAGE ---
 def show_main_page():
+    # Inject Styles & Background
     st.markdown(MAIN_CSS, unsafe_allow_html=True)
     st.markdown('<div class="fluid-bg"><div class="fluid-shape shape-1"></div><div class="fluid-shape shape-2"></div><div class="fluid-shape shape-3"></div></div>', unsafe_allow_html=True)
     
-    # Lazy Load Framework
-    if st.session_state.framework_data is None:
-        with st.spinner("Loading Competency Framework..."):
-            st.session_state.framework_data = load_competency_framework()
+    # Header is static, show it even while loading
+    st.markdown("""
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 1rem 0;">
+            <div>
+                <span class="logo-main">CA</span>
+                <span class="logo-scribe">Scribe <span style="font-size: 1rem; color: #0ea5e9; vertical-align: top;">✦</span></span>
+            </div>
+            <div>
+                <span style="font-size: 0.8rem; color: #0ea5e9; font-family: monospace;">STATUS: CONNECTED</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # --- Header (Logo Left, Settings Right) ---
-    col_head_1, col_head_2 = st.columns([1, 1])
-    with col_head_1:
-         st.markdown("""
-            <div style="display: flex; align-items: baseline;">
-                <span style="font-family: 'Inter', sans-serif; font-weight: 800; color: #003B5C; font-size: 2.2rem; letter-spacing: -0.02em;">CA</span>
-                <span style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; color: #005F88; font-size: 2.2rem; position: relative; margin-left: 2px;">
-                    Scribe <span style="position: absolute; top: -5px; right: -20px; color: #0ea5e9; font-size: 1.2rem;">✦</span>
-                </span>
-                <p style="margin-left: 10px; color: #0c4a6e; opacity: 0.6; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; align-self: center; margin-top: 5px;">AI-Powered Competency Mapper</p>
-            </div>
-        """, unsafe_allow_html=True)
-    with col_head_2:
-        # Settings Button simulation (Right aligned)
-        st.markdown("""
-            <div style="display: flex; justify-content: flex-end; align-items: center; height: 100%; padding-top: 10px;">
-                <button style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.5); border: 1px solid #bae6fd; border-radius: 8px; color: #0369a1; font-weight: 600; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                    <span style="width: 8px; height: 8px; background-color: #34d399; border-radius: 50%; box-shadow: 0 0 5px rgba(52,211,153,0.8);"></span>
-                    Active Session
-                </button>
-            </div>
-        """, unsafe_allow_html=True)
+    # Lazy Load Framework (Non-blocking UI if possible, but st.spinner blocks)
+    if st.session_state.framework_data is None:
+        # We put the spinner inside a placeholder to make it less intrusive?
+        # Or just show it.
+        with st.spinner("Initializing AI Cortex..."):
+            st.session_state.framework_data = load_competency_framework()
 
     # --- Main Content (Glass Card Layout) ---
     container = st.container()
