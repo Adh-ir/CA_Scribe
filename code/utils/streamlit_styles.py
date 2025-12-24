@@ -259,13 +259,16 @@ html, body, [class*="css"] {
 /* Target the new st.container(border=True) */
 [data-testid="stVerticalBlockBorderWrapper"] {
     background: transparent !important;
+    background-color: transparent !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    border: none !important;
+    border: 0px none transparent !important;
+    border-width: 0px !important;
+    outline: none !important;
     box-shadow: none !important;
-    padding: 0 !important;
+    padding: 0px !important;
     margin-top: 1rem;
-    max-width: 1400px; /* Aligns with header */
+    max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
     position: relative !important;
