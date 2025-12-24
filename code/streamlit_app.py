@@ -44,6 +44,8 @@ for k, v in keys.items():
 
 # --- 3. UI: SETUP PAGE ---
 def show_setup_page():
+# --- 3. UI: SETUP PAGE ---
+def show_setup_page():
     # Inject CSS
     st.markdown(SETUP_CSS, unsafe_allow_html=True)
     
@@ -56,15 +58,12 @@ def show_setup_page():
         <div class="beam beam-2"></div>
     """, unsafe_allow_html=True)
     
-    # Simple Spacer to center vertically
-    st.markdown("<br>" * 5, unsafe_allow_html=True)
-
     # Centered Cointainer
     col1, col2, col3 = st.columns([1, 1.5, 1])
     with col2:
         # Logo Section
         st.markdown("""
-            <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="text-align: center; margin-bottom: 2rem; margin-top: 5vh;">
                 <div>
                      <span style="font-family: 'Inter', sans-serif; font-weight: 800; font-size: 3.5rem; color: #ffffff; letter-spacing: -0.03em; text-shadow: 0 0 20px rgba(255,255,255,0.3);">CA</span>
                      <span style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; font-size: 3.5rem; color: #7dd3fc; margin-left: 0.2rem; position: relative;">
@@ -80,25 +79,30 @@ def show_setup_page():
         with st.form("setup_form"):
             # Gemini Input
             st.markdown("""
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Connect Gemini</span>
-                    <span style="font-size: 0.6rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 99px; border: 1px solid rgba(56, 189, 248, 0.2);">RECOMMENDED</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Connect Gemini</span>
+                        <span style="font-size: 0.6rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 99px; border: 1px solid rgba(56, 189, 248, 0.2);">RECOMMENDED</span>
+                    </div>
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size: 0.7rem; color: #38bdf8; text-decoration: none; font-weight: 600;">Get Free Key ↗</a>
                 </div>
             """, unsafe_allow_html=True)
             g_key = st.text_input("Gemini Key", type="password", placeholder="Paste Google API Key (AIza...)", label_visibility="collapsed")
             
             # Groq Input
             st.markdown("""
-                <div style="margin-top: 15px; margin-bottom: 5px;">
+                <div style="margin-top: 15px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Or Groq</span>
+                    <a href="https://console.groq.com/keys" target="_blank" style="font-size: 0.7rem; color: #94a3b8; text-decoration: none; font-weight: 600; hover:color: #38bdf8;">Get Free Key ↗</a>
                 </div>
             """, unsafe_allow_html=True)
             q_key = st.text_input("Groq Key", type="password", placeholder="Paste Groq API Key (gsk_...)", label_visibility="collapsed")
             
             # GitHub Input
             st.markdown("""
-                <div style="margin-top: 15px; margin-bottom: 5px;">
+                <div style="margin-top: 15px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">Or GitHub Models</span>
+                    <a href="https://github.com/marketplace/models" target="_blank" style="font-size: 0.7rem; color: #94a3b8; text-decoration: none; font-weight: 600;">Get Token ↗</a>
                 </div>
             """, unsafe_allow_html=True)
             gh_key = st.text_input("GitHub Token", type="password", placeholder="Personal Access Token", label_visibility="collapsed")
@@ -125,6 +129,27 @@ def show_setup_page():
                         pass 
                         
                     st.rerun()
+
+        # Helper / Documentation Expander
+        with st.expander("📘 Need Help? View API Key Guide"):
+            st.markdown("""
+            ### 🔑 How to get your keys
+            
+            **✨ Google Gemini (Recommended)**
+            1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
+            2. Click **"Create API key"**.
+            3. Copy the key starting with `AIza...`.
+            
+            **⚡ Groq (Fastest)**
+            1. Go to [Groq Console](https://console.groq.com/keys).
+            2. Click **"Create API Key"**.
+            3. Copy the key starting with `gsk_...`.
+            
+            **🐙 GitHub Models (OpenAI)**
+            1. Go to [GitHub Settings > Tokens](https://github.com/settings/tokens).
+            2. Generate a **Personal Access Token (classic)**.
+            3. No special scopes needed. Copy the token starting with `ghp_...`.
+            """)
 
 # --- 4. UI: MAIN PAGE ---
 def show_main_page():
