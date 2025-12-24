@@ -626,15 +626,6 @@ def show_main_page():
                 height: auto !important;
                 padding: 1rem !important;
                 border-color: #e2e8f0 !important;
-                transition: all 0.3s ease !important;
-            }
-
-            /* Deeply target the internal markdown container to force alignment */
-            div.stButton > button[data-testid="stBaseButton-secondary"] div[data-testid="stMarkdownContainer"] {
-                width: 100% !important;
-                text-align: left !important;
-                display: flex !important;
-                justify-content: flex-start !important;
             }
 
             /* Force the main text (p tag) to be left aligned */
@@ -659,16 +650,15 @@ def show_main_page():
                 letter-spacing: normal !important;
             }
             
-            /* Hover Glow Effect (Sky Blue) */
+            /* Remove hover transform/scale to keep it looking solid */
             div.stButton > button[data-testid="stBaseButton-secondary"]:hover {
                 border-color: #38bdf8 !important;
-                background-color: #f0f9ff !important;
-                box-shadow: 0 0 12px rgba(56, 189, 248, 0.5) !important;
+                background-color: #f8fafc !important;
             }
             </style>
         """, unsafe_allow_html=True)
         
-        if st.button("Target Competency", help="Click to pre-fill a template below", use_container_width=True):
+        if st.button("Target Competency", help="Click to pre-fill a template", use_container_width=True):
             st.session_state.activity_input = "COMPETENCY: [Insert Name] EVIDENCE: "
         
         activity_val = st.session_state.get("activity_input", "")
