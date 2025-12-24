@@ -621,6 +621,22 @@ def show_main_page():
                 text-align: left;
                 padding-left: 1rem;
             }
+            /* Remove blue flash on click/focus */
+            div.stButton > button[data-testid="stBaseButton-secondary"]:focus:not(:active) {
+                border-color: #ffffff00;
+                box-shadow: none;
+                color: inherit;
+            }
+            div.stButton > button[data-testid="stBaseButton-secondary"]:focus {
+                border-color: #ffffff00;
+                box-shadow: none;
+                color: inherit;
+            }
+            div.stButton > button[data-testid="stBaseButton-secondary"]:active {
+                background-color: transparent;
+                border-color: #ffffff00;
+                box-shadow: none;
+            }
             </style>
         """, unsafe_allow_html=True)
         
