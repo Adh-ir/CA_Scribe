@@ -578,7 +578,7 @@ def show_setup_page():
     with col2:
         # Enhanced Logo Section - Moved UP by ~50px (10vh -> 5vh)
         st.markdown("""
-            <div style="text-align: center; margin-bottom: 2.5rem; margin-top: 5vh;">
+            <div style="text-align: center; margin-bottom: 2.5rem; margin-top: 3vh;">
                 <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.25rem; margin-bottom: 0.5rem;">
                      <span class="logo-main" style="font-size: 4rem;">CA</span>
                      <span class="logo-scribe" style="font-size: 4rem; position: relative;">
