@@ -713,35 +713,39 @@ def show_main_page():
 
     # --- LEFT PANEL (Input) ---
     with main_col1:
-        # Helper Prompt
+        # Custom HTML button to avoid Streamlit rerun flash
         st.markdown("""
             <style>
-            /* Left-align the Target Competency button */
-            div.stButton > button[data-testid="stBaseButton-secondary"] {
-                justify-content: flex-start;
+            .custom-template-btn {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                background: white;
+                border: 1px solid #e0f2fe;
+                border-radius: 0.75rem;
+                color: #0369a1;
+                font-weight: 600;
+                font-size: 1rem;
                 text-align: left;
-                padding-left: 1rem;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-family: 'Inter', sans-serif;
             }
-            /* Completely remove blue flash/focus ring on all states */
-            div.stButton > button[data-testid="stBaseButton-secondary"]:focus,
-            div.stButton > button[data-testid="stBaseButton-secondary"]:active,
-            div.stButton > button[data-testid="stBaseButton-secondary"]:focus:not(:active),
-            div.stButton > button[data-testid="stBaseButton-secondary"]:focus-visible {
-                outline: none !important;
-                border-color: rgb(230, 234, 241) !important;
-                box-shadow: none !important;
-                background-color: rgb(255, 255, 255) !important;
+            .custom-template-btn:hover {
+                background: #f0f9ff;
+                border-color: #7dd3fc;
             }
-            /* Remove focus ring from button container */
-            div.stButton:focus-within {
-                outline: none !important;
-                box-shadow: none !important;
+            .custom-template-btn:active {
+                transform: scale(0.98);
             }
             </style>
+            <button class="custom-template-btn" onclick="
+                const textarea = document.querySelector('textarea[aria-label=\\'Activity Description\\']');
+                if (textarea) {
+                    textarea.value = 'COMPETENCY: [Insert Name] EVIDENCE: ';
+                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            ">✨ Target Competency</button>
         """, unsafe_allow_html=True)
-        
-        if st.button("✨ Target Competency", help="Click to pre-fill a template", use_container_width=True):
-            st.session_state.activity_input = "COMPETENCY: [Insert Name] EVIDENCE: "
         
 
 
