@@ -26,6 +26,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# --- INITIALIZE SESSION STATE ---
+if "framework_data" not in st.session_state:
+    st.session_state.framework_data = None
+    
+if "markdown_report" not in st.session_state:
+    st.session_state.markdown_report = ""
+
 # Force global styles immediately
 st.markdown("""
     <style>
@@ -390,11 +397,6 @@ if not st.session_state.loading_complete:
     st.rerun()
 
 # --- APP START ---
-if "framework_data" not in st.session_state:
-    st.session_state.framework_data = None
-    
-if "markdown_report" not in st.session_state:
-    st.session_state.markdown_report = ""
 
 # --- 2. AUTHENTICATION ---
 def get_api_keys():
