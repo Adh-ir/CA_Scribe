@@ -627,18 +627,7 @@ def show_main_page():
         if st.button("✨ Target Competency", help="Click to pre-fill a template", use_container_width=True):
             st.session_state.activity_input = "COMPETENCY: [Insert Name] EVIDENCE: "
         
-        st.markdown("""
-            <div style="
-                margin-top: -0.75rem; 
-                margin-bottom: 1rem; 
-                font-size: 0.75rem; 
-                color: #94a3b8; 
-                font-weight: 500;
-                padding-left: 0.25rem;
-            ">
-                Click to autofill template
-            </div>
-        """, unsafe_allow_html=True)
+
 
         
         activity_val = st.session_state.get("activity_input", "")
