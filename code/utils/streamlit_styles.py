@@ -258,17 +258,14 @@ html, body, [class*="css"] {
 /* --- GLASS CARD WRAPPER (Applied to Streamlit Border Container) --- */
 /* Target the new st.container(border=True) */
 [data-testid="stVerticalBlockBorderWrapper"] {
-    background: rgba(255, 255, 255, 0.60); /* Match local glass opacity */
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 3px solid #93c5fd !important; /* Match local 3px Blue Fixed Border */
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.02),
-        0 20px 40px -12px rgba(14, 165, 233, 0.1);
-    border-radius: 20px;
-    padding: 1rem !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
     margin-top: 1rem;
-    max-width: 1400px;
+    max-width: 1400px; /* Aligns with header */
     margin-left: auto;
     margin-right: auto;
     position: relative !important;
