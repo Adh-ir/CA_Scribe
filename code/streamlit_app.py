@@ -104,10 +104,10 @@ LOADING_HTML = """
     body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(135deg, #7dd3fc 0%, #bae6fd 100%); font-family: 'Inter', sans-serif; }
     #container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
     #introCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; transition: opacity 1.5s ease-out; }
-    #precise-text { position: relative; z-index: 2; opacity: 0; transition: opacity 1.5s ease-out; display: flex; flex-direction: column; align-items: center; justify-content: center; -webkit-font-smoothing: antialiased; }
+    #precise-text { position: relative; z-index: 2; opacity: 0; transition: opacity 1.5s ease-out; display: flex; flex-direction: column; align-items: center; justify-content: center; -webkit-font-smoothing: antialiased; top: -30px; }
     #loading-label { 
         position: absolute; 
-        top: 50%; 
+        top: calc(50% - 30px); 
         left: 50%; 
         transform: translate(-50%, -50%); 
         font-family: 'Inter', sans-serif; 
