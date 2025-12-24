@@ -157,7 +157,7 @@ header {visibility: hidden;}
 
 [data-testid="stForm"]:focus-within {
     border-color: #1e3a8a !important;
-    box-shadow: 0 0 25px rgba(56, 189, 248, 0.4), 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 0 25px rgba(2, 132, 199, 0.5), 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
 }
 
 /* --- LOGO STYLES --- */
