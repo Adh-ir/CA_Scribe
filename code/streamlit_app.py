@@ -561,9 +561,12 @@ def show_setup_page():
     st.markdown(FONT_LINKS, unsafe_allow_html=True)
     st.markdown(SETUP_CSS, unsafe_allow_html=True)
     
-    # Fluid Background Elements (matching main app)
+    # Particle Wave Background Elements
     st.markdown("""
         <div class="fluid-bg">
+            <div class="dot-grid"></div>
+            <div class="wave-layer"></div>
+            <div class="wave-layer-2"></div>
             <div class="fluid-shape shape-1"></div>
             <div class="fluid-shape shape-2"></div>
             <div class="fluid-shape shape-3"></div>
@@ -573,9 +576,9 @@ def show_setup_page():
     # Centered Container
     col1, col2, col3 = st.columns([1, 1.5, 1])
     with col2:
-        # Enhanced Logo Section
+        # Enhanced Logo Section - Moved UP by ~50px (10vh -> 5vh)
         st.markdown("""
-            <div style="text-align: center; margin-bottom: 2.5rem; margin-top: 10vh;">
+            <div style="text-align: center; margin-bottom: 2.5rem; margin-top: 5vh;">
                 <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.25rem; margin-bottom: 0.5rem;">
                      <span class="logo-main" style="font-size: 4rem;">CA</span>
                      <span class="logo-scribe" style="font-size: 4rem; position: relative;">
@@ -586,8 +589,8 @@ def show_setup_page():
                 <div style="font-family: 'Inter', sans-serif; font-weight: 600; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.85rem; margin-top: -0.25rem;">
                     AI-Powered Competency Mapper
                 </div>
-                <div style="font-family: 'Inter', sans-serif; font-weight: 400; color: #94a3b8; font-size: 0.9rem; margin-top: 1.5rem; line-height: 1.5;">
-                    Connect your AI provider to get started
+                <div style="font-family: 'Inter', sans-serif; font-weight: 500; color: #ffffff; font-size: 0.95rem; margin-top: 2rem; line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                    Please retrieve and install one or all of the API keys below to get access to each model
                 </div>
             </div>
         """, unsafe_allow_html=True)

@@ -26,7 +26,7 @@ html, body, [class*="css"] {
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
-/* --- FLUID BACKGROUND ENGINE --- */
+/* --- DOT WAVE BACKGROUND ENGINE --- */
 .fluid-bg {
     position: fixed;
     top: 0;
@@ -38,11 +38,54 @@ header {visibility: hidden;}
     overflow: hidden;
 }
 
+/* Base Dot Pattern */
+.dot-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(rgba(14, 165, 233, 0.3) 1px, transparent 1px);
+    background-size: 30px 30px;
+    mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 80%);
+    opacity: 0.6;
+}
+
+/* Animated Wave Overlay */
+.wave-layer {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: radial-gradient(rgba(14, 165, 233, 0.4) 1.5px, transparent 1.5px);
+    background-size: 40px 40px;
+    opacity: 0.4;
+    animation: waveFloat 20s infinite linear;
+    transform: rotate(15deg);
+}
+
+.wave-layer-2 {
+    background-image: radial-gradient(rgba(56, 189, 248, 0.5) 1.5px, transparent 1.5px);
+    background-size: 45px 45px;
+    animation-duration: 25s;
+    animation-direction: reverse;
+    opacity: 0.3;
+    left: -20%;
+}
+
+@keyframes waveFloat {
+    0% { transform: rotate(15deg) translateY(0); }
+    50% { transform: rotate(15deg) translateY(-50px); }
+    100% { transform: rotate(15deg) translateY(0); }
+}
+
+/* Keep original fluid shapes but make them very subtle for depth */
 .fluid-shape {
     position: absolute;
     border-radius: 50%;
-    filter: blur(65px);
-    opacity: 0.9;
+    filter: blur(80px); /* Increased blur */
+    opacity: 0.4; /* Reduced opacity */
     animation: fluid-move 14s infinite ease-in-out;
     will-change: transform;
     mix-blend-mode: multiply;
