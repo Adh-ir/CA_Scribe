@@ -104,6 +104,25 @@ st.markdown("""
         outline: 0 !important;
         box-shadow: none !important;
     }
+    
+    /* TARGET THE SPECIFIC CONTAINERS THAT FLASH BLUE */
+    [data-testid="stHorizontalBlock"],
+    [data-testid="stHorizontalBlock"]:focus,
+    [data-testid="stHorizontalBlock"]:focus-within,
+    [data-testid="stColumn"],
+    [data-testid="stColumn"]:focus,
+    [data-testid="stColumn"]:focus-within,
+    [data-testid="stVerticalBlock"],
+    [data-testid="stVerticalBlock"]:focus,
+    [data-testid="stVerticalBlock"]:focus-within {
+        outline: 0 !important;
+        outline-width: 0 !important;
+        outline-style: none !important;
+        outline-color: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
