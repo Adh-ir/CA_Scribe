@@ -606,73 +606,71 @@ def show_main_page():
     """, unsafe_allow_html=True)
     
     # --- Main Content (The Glass Card) ---
-    # We use st.container(border=True) to create the single glass card wrapper
-    # The CSS targets [data-testid="stVerticalBlockBorderWrapper"]
-    with st.container(border=True):
-        # 2. COLUMNS (Inputs & Report)
-        main_col1, main_col2 = st.columns([4, 6], gap="large")
-        
-        # --- LEFT PANEL (Input) ---
-        with main_col1:
-            # Helper Prompt
-            if st.button("✨ Target Competency Template", help="Click to pre-fill a template"):
-                st.session_state.activity_input = "COMPETENCY: [Insert Name] EVIDENCE: "
-            
-            activity_val = st.session_state.get("activity_input", "")
-            activity = st.text_area(
-                "Activity Description", 
-                value=activity_val,
-                height=350, 
-                placeholder="Describe your activity... e.g. 'I managed the inventory count for the client...'",
-                label_visibility="visible"
-            )
-            # Update state on change
-            st.session_state.activity_input = activity 
-            
-            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-            
-            provider = st.selectbox(
-                "AI Model", 
-                ["gemini", "groq", "github_mini", "github_4o"], 
-                format_func=lambda x: {
-                    "gemini": "✨ Gemini 2.0 Flash Exp",
-                    "groq": "⚡ Groq (Llama 3)",
-                    "github_mini": "🐙 GitHub - GPT-4o Mini",
-                    "github_4o": "🐙 GitHub - GPT-4o"
-                }.get(x, x)
-            )
-            
-            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-            
-            if st.button("Generate Analysis 🚀", use_container_width=True, type="primary"):
-                if not activity.strip():
-                    st.warning("Please describe your activity first.")
-                else:
-                    with st.spinner("Analyzing with AI..."):
-                        try:
-                            results = map_activity_to_competency(activity, st.session_state.framework_data, provider=provider)
-                            st.session_state.markdown_report = generate_markdown_content(results)
-                        except Exception as e:
-                            st.error(f"Analysis failed: {e}")
+    # --- Main Content (The Glass Card) ---
+    # 2. COLUMNS (Inputs & Report)
+    main_col1, main_col2 = st.columns([4, 6], gap="large")
 
-        # --- RIGHT PANEL (Report) ---
-        with main_col2:
-            st.markdown("### Analysis Report")
-            if st.session_state.markdown_report:
-                st.markdown(st.session_state.markdown_report)
+    # --- LEFT PANEL (Input) ---
+    with main_col1:
+        # Helper Prompt
+        if st.button("✨ Target Competency Template", help="Click to pre-fill a template"):
+            st.session_state.activity_input = "COMPETENCY: [Insert Name] EVIDENCE: "
+        
+        activity_val = st.session_state.get("activity_input", "")
+        activity = st.text_area(
+            "Activity Description", 
+            value=activity_val,
+            height=350, 
+            placeholder="Describe your activity... e.g. 'I managed the inventory count for the client...'",
+            label_visibility="visible"
+        )
+        # Update state on change
+        st.session_state.activity_input = activity 
+        
+        st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+        
+        provider = st.selectbox(
+            "AI Model", 
+            ["gemini", "groq", "github_mini", "github_4o"], 
+            format_func=lambda x: {
+                "gemini": "✨ Gemini 2.0 Flash Exp",
+                "groq": "⚡ Groq (Llama 3)",
+                "github_mini": "🐙 GitHub - GPT-4o Mini",
+                "github_4o": "🐙 GitHub - GPT-4o"
+            }.get(x, x)
+        )
+        
+        st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+        
+        if st.button("Generate Analysis 🚀", use_container_width=True, type="primary"):
+            if not activity.strip():
+                st.warning("Please describe your activity first.")
             else:
-                st.markdown("""
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: #94a3b8; opacity: 0.7;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        <p style="margin-top: 20px; font-weight: 500;">Detailed mapping will appear here</p>
-                    </div>
-                """, unsafe_allow_html=True)
+                with st.spinner("Analyzing with AI..."):
+                    try:
+                        results = map_activity_to_competency(activity, st.session_state.framework_data, provider=provider)
+                        st.session_state.markdown_report = generate_markdown_content(results)
+                    except Exception as e:
+                        st.error(f"Analysis failed: {e}")
+
+    # --- RIGHT PANEL (Report) ---
+    with main_col2:
+        st.markdown("### Analysis Report")
+        if st.session_state.markdown_report:
+            st.markdown(st.session_state.markdown_report)
+        else:
+            st.markdown("""
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: #94a3b8; opacity: 0.7;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <p style="margin-top: 20px; font-weight: 500;">Detailed mapping will appear here</p>
+                </div>
+            """, unsafe_allow_html=True)
                 
         # st.markdown('</div>', unsafe_allow_html=True) # Removed invalid wrapper
 
