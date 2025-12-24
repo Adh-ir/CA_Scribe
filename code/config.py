@@ -1,5 +1,3 @@
-import os
-
 # Configuration Settings
 
 # SAICA_Scribe Configuration

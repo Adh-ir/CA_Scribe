@@ -31,6 +31,7 @@ app = FastAPI(title="SAICA Scribe UI")
 # Templates
 BASE_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
 # Global Framework Data (Lazy Load)
 framework_data = None

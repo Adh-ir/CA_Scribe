@@ -5,23 +5,160 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAICA Scribe</title>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
     <!-- Tailwind CSS (via CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+
+    <!-- Google Fonts (V12 Selection) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,600&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+
     <style>
+        /* --- Base V12 Styles --- */
         body {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff;
+            color: #1e3a8a;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+        /* --- FLUID BACKGROUND ENGINE (V12) --- */
+        .fluid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            overflow: hidden;
         }
 
+        .fluid-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(65px);
+            opacity: 0.9;
+            animation: fluid-move 14s infinite ease-in-out;
+            will-change: transform;
+            mix-blend-mode: multiply;
+        }
+
+        .shape-1 {
+            background: #7dd3fc;
+            width: 65vw;
+            height: 65vw;
+            top: -15%;
+            left: -10%;
+            animation-duration: 16s;
+        }
+
+        .shape-2 {
+            background: #bae6fd;
+            width: 70vw;
+            height: 70vw;
+            top: 25%;
+            right: -25%;
+            animation-duration: 20s;
+            animation-delay: -4s;
+        }
+
+        .shape-3 {
+            background: #a5f3fc;
+            width: 55vw;
+            height: 55vw;
+            bottom: -15%;
+            left: 15%;
+            animation-duration: 14s;
+            animation-delay: -8s;
+        }
+
+        @keyframes fluid-move {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(45px, 65px) scale(1.1) rotate(8deg);
+            }
+
+            66% {
+                transform: translate(-35px, 25px) scale(0.9) rotate(-6deg);
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+        }
+
+        /* --- GLASS CARD (V12 - Custom Border) --- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.60);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 3px solid #93c5fd;
+            /* V12 Final Border */
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.02),
+                0 20px 40px -12px rgba(14, 165, 233, 0.1);
+            border-radius: 20px;
+        }
+
+        /* Logo Styles */
+        .logo-main {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #003B5C;
+        }
+
+        .logo-scribe {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 600;
+            color: #005F88;
+        }
+
+        /* Divider */
+        .vertical-divider {
+            width: 1px;
+            background-color: #cbd5e1;
+            height: auto;
+            align-self: stretch;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .mono-label {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* --- Input Styling --- */
+        .custom-input {
+            border: 1px solid #cbd5e1;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-input:focus {
+            outline: none;
+            background-color: #ffffff;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+        }
+
+        /* --- Markdown Styles --- */
         .markdown-body h1 {
             font-size: 1.5rem;
             line-height: 2rem;
@@ -64,12 +201,23 @@
             border-bottom-right-radius: 0.25rem;
         }
 
-        /* Alert styles mirroring GitHub alerts */
-        blockquote p {
+        .markdown-body blockquote p {
             font-weight: 500;
         }
 
-        /* Modal Animation */
+        .markdown-body ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .markdown-body ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Modal Styles --- */
         .modal {
             transition: opacity 0.3s ease;
         }
@@ -89,109 +237,129 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-100 to-slate-300 min-h-screen text-slate-800 flex flex-col">
+<body>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl flex-grow">
-        <header class="mb-8 flex justify-between items-center">
+    <!-- Background -->
+    <div class="fluid-bg">
+        <div class="fluid-shape shape-1"></div>
+        <div class="fluid-shape shape-2"></div>
+        <div class="fluid-shape shape-3"></div>
+    </div>
+
+    <div class="container mx-auto px-6 py-10 max-w-[1300px] flex-grow flex flex-col z-10">
+
+        <!-- Header -->
+        <header class="mb-8 pl-2 flex justify-between items-end">
             <div>
-                <h1
-                    class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                    SAICA Scribe
+                <h1 class="text-4xl flex items-baseline gap-1">
+                    <span class="logo-main text-[#003B5C]">SAICA</span>
+                    <span class="logo-scribe text-[#005F88] relative">
+                        Scribe
+                        <span class="absolute -top-1 -right-4 text-[#0ea5e9] text-base">✦</span>
+                    </span>
                 </h1>
-                <p class="text-slate-500 mt-1">AI-Powered Competency Mapper</p>
+                <p class="text-sky-900/60 text-sm font-medium tracking-wide mt-1 pl-1">AI-Powered Competency Mapper</p>
             </div>
-            <div class="flex items-center gap-4">
+
+            <div class="flex items-center gap-3 mb-2">
                 <button onclick="openSettings()"
-                    class="text-sm font-medium text-slate-500 hover:text-blue-600 bg-white/50 px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-200 transition flex items-center gap-2">
-                    <span id="statusDot" class="w-2 h-2 rounded-full bg-red-400"></span>
+                    class="flex items-center gap-2 px-4 py-2 bg-white/50 hover:bg-white/70 transition backdrop-blur-md rounded-lg border border-sky-200 shadow-sm text-sm font-semibold text-sky-800 cursor-pointer group">
+                    <!-- Status Dot -->
+                    <span id="statusDot"
+                        class="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_5px_rgba(248,113,113,0.8)] animate-pulse"></span>
                     Settings
                 </button>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Main Content (Glass Card) - V12 Layout with Overflow Hidden -->
+        <div class="glass-card flex flex-col lg:flex-row overflow-hidden h-[750px] shadow-2xl">
 
-            <!-- Left Panel: Input -->
-            <div class="lg:col-span-5 space-y-6">
-                <!-- Prompt Helper Button -->
+            <!-- Left Panel -->
+            <div class="lg:w-[40%] p-10 flex flex-col gap-8 bg-white/40">
+
+                <!-- Helper Button -->
                 <button onclick="insertPromptTemplate()"
-                    class="w-full text-left bg-gradient-to-r from-blue-500 to-indigo-600 hover:to-indigo-700 text-white p-4 rounded-xl shadow-lg transition transform hover:scale-[1.02] group">
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold">🎯 Target Individual Competency</span>
-                        <span class="opacity-75 group-hover:opacity-100 transition">+</span>
+                    class="w-full text-left bg-gradient-to-r from-white to-sky-50 border border-sky-100 hover:border-sky-300 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold text-sky-900 text-sm flex items-center gap-2">
+                            <span class="text-sky-500">✨</span> Target Competency
+                        </span>
+                        <span class="text-sky-900/40 group-hover:text-sky-600 transition">+</span>
                     </div>
-                    <p class="text-xs text-blue-100 mt-1">Click to auto-fill keyword template</p>
+                    <p class="text-xs text-sky-900/40 font-medium pl-6 mt-0.5">Click to autofill template</p>
                 </button>
 
-                <div class="glass-panel rounded-2xl p-6 shadow-xl">
-                    <form id="mappingForm" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">My Activity</label>
-                            <textarea id="activityInput" name="activity" rows="8"
-                                class="w-full rounded-xl border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition p-4 text-sm"
-                                placeholder="Describe your activity... e.g. 'I managed the inventory count for the client...'"></textarea>
-                        </div>
+                <!-- FORM START -->
+                <form id="mappingForm" class="flex-grow flex flex-col gap-8">
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">AI Model</label>
+                    <!-- Input with FIXED HEIGHT for scrolling -->
+                    <div class="flex-grow flex flex-col">
+                        <label
+                            class="block text-xs font-bold text-sky-900/60 uppercase tracking-widest mb-3 pl-1">Activity
+                            Description</label>
+                        <textarea id="activityInput" name="activity"
+                            class="w-full flex-1 p-5 rounded-2xl text-slate-800 text-base resize-none custom-input shadow-inner placeholder-slate-400 font-medium overflow-y-auto"
+                            placeholder="Describe your activity... e.g. 'I managed the inventory count for the client...'"></textarea>
+                    </div>
+
+                    <!-- Footer of Left Panel -->
+                    <div class="space-y-4">
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-sky-900/60 uppercase tracking-widest mb-3 pl-1">AI
+                                Model</label>
+                            <div class="relative">
                                 <select id="providerSelect" name="provider"
-                                    class="w-full rounded-xl border-slate-200 bg-white/50 p-2.5 text-sm font-medium">
+                                    class="w-full p-4 rounded-xl text-sky-900 text-sm font-medium appearance-none cursor-pointer custom-input">
                                     <option value="gemini" selected>✨ Gemini 2.0 Flash Exp</option>
                                     <option value="groq">⚡ Groq (Llama 3)</option>
                                     <option value="github_mini">🐙 GitHub - GPT-4o Mini (Fast)</option>
                                     <option value="github_4o">🐙 GitHub - GPT-4o (Powerful)</option>
                                 </select>
-                            </div>
-                            <div class="flex items-end">
-                                <button type="submit" id="submitBtn"
-                                    class="w-full bg-slate-800 hover:bg-black text-white font-bold py-2.5 px-4 rounded-xl transition duration-200 shadow-lg flex justify-center items-center gap-2">
-                                    <span>Generate Report</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M13.5 4.5l7.5 7.5-7.5 7.5m-15-7.5h22.5" />
-                                    </svg>
-                                </button>
+                                <div class="absolute right-4 top-4 pointer-events-none text-sky-500">▼</div>
                             </div>
                         </div>
-                    </form>
-                </div>
 
-                <!-- Tips Panel -->
-                <div class="glass-panel rounded-2xl p-6 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-600 mb-3 uppercase tracking-wider">Tips for better results
-                    </h3>
-                    <ul class="text-xs text-slate-500 space-y-3">
-                        <li class="flex gap-2">
-                            <span><strong>Be Specific:</strong> Include details like Where, When, and Who.</span>
-                        </li>
-                        <li class="flex gap-2">
-                            <span><strong>Target Skills:</strong> Use the format
-                                <code>COMPETENCY: [Name of Competency] EVIDENCE: [Description of Evidence]</code> to
-                                focus on specific areas.</span>
-                        </li>
-                        <li class="flex gap-2">
-                            <span><strong>Search Scope:</strong> If no competency is specified, Gemini will
-                                automatically search the full training plan.</span>
-                        </li>
-                    </ul>
-                </div>
+                        <button type="submit" id="submitBtn"
+                            class="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-sky-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex justify-center items-center gap-2">
+                            <span>Generate Analysis</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                </form>
             </div>
 
-            <!-- Right Panel: Output -->
-            <div class="lg:col-span-7 flex flex-col">
-                <div class="glass-panel rounded-2xl p-6 shadow-xl h-full flex flex-col">
-                    <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
-                        <h2 class="text-lg font-bold text-slate-700">Assessment Report</h2>
+            <!-- Vertical Divider -->
+            <div class="hidden lg:block vertical-divider"></div>
+
+            <!-- Right Panel -->
+            <div class="lg:w-[60%] right-panel p-10 relative flex flex-col">
+                <div class="flex justify-between items-start border-b border-sky-100 pb-4 mb-4">
+                    <h2 class="text-xl font-bold text-slate-700">Analysis Report</h2>
+
+                    <div class="flex items-center gap-2">
+                        <span id="waitingLabel"
+                            class="mono-label text-[10px] text-slate-400 tracking-widest pt-1 uppercase">Waiting for
+                            Input</span>
                         <button id="copyBtn"
                             class="hidden text-xs font-bold text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition uppercase tracking-wide">
                             Copy Markdown
                         </button>
                     </div>
+                </div>
 
+                <!-- Content Area -->
+                <div class="flex-1 flex flex-col min-h-0">
+
+                    <!-- Loading State -->
                     <div id="loadingIndicator"
-                        class="hidden flex-1 flex flex-col items-center justify-center text-slate-400">
+                        class="hidden flex-1 flex flex-col items-center justify-center text-slate-400 opacity-70">
                         <svg class="animate-spin h-10 w-10 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
@@ -200,87 +368,94 @@
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                             </path>
                         </svg>
-                        <p class="animate-pulse">Analyzing Training Plan...</p>
+                        <p class="animate-pulse font-medium">Analyzing with AI...</p>
                     </div>
 
-                    <div id="outputContent" class="markdown-body text-sm overflow-y-auto max-h-[700px] pr-2 flex-grow">
-                        <div class="text-center text-slate-400 mt-20">
-                            <p>Result will appear here.</p>
+                    <!-- Initial State -->
+                    <div id="initialState"
+                        class="flex-1 flex flex-col items-center justify-center opacity-70 space-y-4">
+                        <div
+                            class="w-16 h-16 rounded-full border border-dashed border-slate-400 flex items-center justify-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
                         </div>
+                        <p class="text-slate-600 font-medium">Detailed mapping will appear here</p>
                     </div>
 
-                    <!-- Disclaimer -->
-                    <div class="mt-4 pt-4 border-t border-slate-200 text-center">
-                        <p class="text-[10px] text-slate-400 font-medium">
-                            This is an open source LLM model which can be prone to mistakes. Please review output
-                        </p>
+                    <!-- Output Content with FLEX HEIGHT for scrolling -->
+                    <div id="outputContent" class="hidden markdown-body text-sm flex-1 overflow-y-auto pr-2">
+                        <!-- Markdown results go here -->
                     </div>
+
                 </div>
             </div>
+
         </div>
+
     </div>
 
-    <!-- Footer with Branding -->
-    <footer class="mt-8 py-6 text-center text-sm text-slate-400 border-t border-slate-200 bg-slate-50/50">
-        <p class="mb-2">Made by <strong>Adhir Singh</strong></p>
-        <div class="flex justify-center gap-4">
-            <a href="https://github.com/Adh-ir/SAICA_Scribe/issues/new?title=[SAICA%20Scribe]%20User%20Feedback&body=Describe%20your%20bug%20report%20or%20suggestion%20here..."
-                target="_blank" class="hover:text-blue-500 transition flex items-center gap-1">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <!-- Footer -->
+    <footer
+        class="mt-8 py-6 text-center text-sm text-sky-900/60 border-t border-sky-100 bg-white/20 backdrop-blur-sm z-10">
+        <p class="mb-3">Made by <strong class="text-sky-800">Adhir Singh</strong></p>
+        <div class="flex justify-center gap-6 items-center">
+            <a href="https://github.com/Adh-ir/SAICA_Scribe/issues" target="_blank"
+                class="hover:text-blue-600 transition flex items-center gap-2 group">
+                <svg class="w-4 h-4 opacity-70 group-hover:opacity-100" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd"
                         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
                         clip-rule="evenodd" />
                 </svg>
-                Report Issue
+                <span class="text-xs font-semibold">Report Issue</span>
             </a>
             <a href="https://github.com/Adh-ir" target="_blank"
-                class="hover:text-blue-500 transition flex items-center gap-1">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                class="hover:text-blue-600 transition opacity-70 hover:opacity-100" title="GitHub">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd"
-                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                        d="M12 2C6.477 2 2 6.48 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
                         clip-rule="evenodd" />
                 </svg>
-                GitHub
             </a>
             <a href="https://www.linkedin.com/in/adhirs/" target="_blank"
-                class="hover:text-blue-500 transition flex items-center gap-1">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                class="hover:text-blue-600 transition opacity-70 hover:opacity-100" title="LinkedIn">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd"
                         d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
                         clip-rule="evenodd" />
                 </svg>
-                LinkedIn
             </a>
         </div>
     </footer>
 
-    <!-- Settings Modal -->
+    <!-- Settings Modal (Same functional modal) -->
     <div id="settingsModal"
         class="modal modal-hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-        <div class="modal-content bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4">
-            <h3 class="text-xl font-bold mb-4">API Configuration</h3>
+        <div class="modal-content bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 border border-sky-100">
+            <h3 class="text-xl font-bold mb-4 text-sky-900">API Configuration</h3>
             <form id="settingsForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">Gemini Key</label>
+                    <label class="block text-sm font-bold text-sky-800 mb-1">Gemini Key</label>
                     <input type="password" name="google_key" placeholder="Starts with AIza..."
-                        class="w-full text-sm font-mono border border-slate-300 rounded-lg p-2.5">
+                        class="w-full text-sm font-mono border border-sky-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-sky-500">
                     <a href="https://aistudio.google.com/app/apikey" target="_blank"
-                        class="text-xs text-blue-500 hover:underline">Get Key ↗</a>
+                        class="text-xs text-sky-500 hover:underline">Get Key ↗</a>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">Groq Key</label>
+                    <label class="block text-sm font-bold text-sky-800 mb-1">Groq Key</label>
                     <input type="password" name="groq_key" placeholder="Starts with gsk_..."
-                        class="w-full text-sm font-mono border border-slate-300 rounded-lg p-2.5">
+                        class="w-full text-sm font-mono border border-sky-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-sky-500">
                     <a href="https://console.groq.com/keys" target="_blank"
-                        class="text-xs text-blue-500 hover:underline">Get Key ↗</a>
+                        class="text-xs text-sky-500 hover:underline">Get Key ↗</a>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-1">GitHub Models (OpenAI)</label>
+                    <label class="block text-sm font-bold text-sky-800 mb-1">GitHub Models (OpenAI)</label>
                     <input type="password" name="github_key" placeholder="GitHub Personal Access Token"
-                        class="w-full text-sm font-mono border border-slate-300 rounded-lg p-2.5">
-
+                        class="w-full text-sm font-mono border border-sky-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-sky-500">
                     <a href="https://github.com/marketplace/models" target="_blank"
-                        class="text-xs text-blue-500 hover:underline">Get Key ↗</a>
+                        class="text-xs text-sky-500 hover:underline">Get Key ↗</a>
                 </div>
                 <div class="text-right">
                     <a href="/guide" target="_blank" class="text-xs font-bold text-slate-500 hover:text-blue-600">Need
@@ -288,20 +463,23 @@
                 </div>
                 <div class="flex justify-end gap-2 mt-4">
                     <button type="button" onclick="closeSettings()"
-                        class="px-4 py-2 rounded-lg text-slate-500 hover:bg-slate-100">Cancel</button>
+                        class="px-4 py-2 rounded-lg text-slate-500 hover:bg-slate-100 font-semibold transition">Cancel</button>
                     <button type="submit"
-                        class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-bold">Save
+                        class="px-5 py-2 rounded-lg bg-sky-600 text-white hover:bg-sky-500 font-bold transition shadow-md">Save
                         Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- MAIN LOGIC -->
     <script>
         // Main App Logic
         const form = document.getElementById('mappingForm');
         const outputDiv = document.getElementById('outputContent');
         const loadingDiv = document.getElementById('loadingIndicator');
+        const initialState = document.getElementById('initialState');
+        const waitingLabel = document.getElementById('waitingLabel');
         const copyBtn = document.getElementById('copyBtn');
         const statusDot = document.getElementById('statusDot');
         let currentMarkdown = "";
@@ -312,13 +490,12 @@
                 const res = await fetch('/api/status');
                 const data = await res.json();
 
-                // Green if ANY key is configured
                 if (data.google_configured || data.groq_configured) {
-                    statusDot.classList.remove('bg-red-400');
-                    statusDot.classList.add('bg-green-400');
+                    statusDot.classList.remove('bg-red-400', 'shadow-[0_0_5px_rgba(248,113,113,0.8)]');
+                    statusDot.classList.add('bg-emerald-400', 'shadow-[0_0_5px_rgba(52,211,153,0.8)]');
                 } else {
-                    statusDot.classList.remove('bg-green-400');
-                    statusDot.classList.add('bg-red-400');
+                    statusDot.classList.remove('bg-emerald-400', 'shadow-[0_0_5px_rgba(52,211,153,0.8)]');
+                    statusDot.classList.add('bg-red-400', 'shadow-[0_0_5px_rgba(248,113,113,0.8)]');
                 }
             } catch (e) {
                 console.error("Status check failed", e);
@@ -358,7 +535,6 @@
             }
         });
 
-        // Close modal on click outside
         document.getElementById('settingsModal').addEventListener('click', (e) => {
             if (e.target.id === 'settingsModal') closeSettings();
         });
@@ -368,6 +544,9 @@
             e.preventDefault();
             const formData = new FormData(form);
 
+            // UI State: Loading
+            if (initialState) initialState.classList.add('hidden');
+            if (waitingLabel) waitingLabel.innerText = "PROCESSING...";
             outputDiv.classList.add('hidden');
             loadingDiv.classList.remove('hidden');
             copyBtn.classList.add('hidden');
@@ -377,7 +556,6 @@
 
                 if (!response.ok) {
                     const errData = await response.json();
-                    // Handle FastAPI validation error list or simple message
                     let msg = errData.message || errData.detail || "Server Error";
                     if (typeof msg === 'object') {
                         msg = JSON.stringify(msg, null, 2);
@@ -393,18 +571,21 @@
 
                 currentMarkdown = data.markdown_report;
 
+                // UI State: Success
                 outputDiv.innerHTML = marked.parse(currentMarkdown);
                 loadingDiv.classList.add('hidden');
                 outputDiv.classList.remove('hidden');
                 copyBtn.classList.remove('hidden');
+                if (waitingLabel) waitingLabel.innerText = "COMPLETE";
 
             } catch (error) {
                 console.error(error);
                 loadingDiv.classList.add('hidden');
                 outputDiv.classList.remove('hidden');
-                outputDiv.innerHTML = `<div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                    <p class="font-bold text-red-700">Error</p>
-                    <p class="text-red-600 text-sm">${error.message}</p>
+                if (waitingLabel) waitingLabel.innerText = "ERROR";
+                outputDiv.innerHTML = `<div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl">
+                    <p class="font-bold text-red-700">Analysis Failed</p>
+                    <p class="text-red-600 text-sm mt-1">${error.message}</p>
                 </div>`;
             }
         });
@@ -412,7 +593,7 @@
         copyBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(currentMarkdown);
             const originalText = copyBtn.innerText;
-            copyBtn.innerText = "Copied!";
+            copyBtn.innerText = "COPIED!";
             setTimeout(() => copyBtn.innerText = originalText, 2000);
         });
     </script>
