@@ -280,6 +280,13 @@ html, body, [class*="css"] {
     border: none !important;
 }
 
+/* TARGETED FIX: Make the main columns container white */
+[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stHorizontalBlock"]:has(.stTextArea) {
+    background-color: #ffffff !important;
+    border-radius: 20px;
+    padding: 2rem;
+}
+
 /* --- LOGO STYLES (From Local Index.html) --- */
 .logo-main {
     font-family: 'Inter', sans-serif;
