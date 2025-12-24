@@ -251,11 +251,13 @@ html, body, [class*="css"] {
 /* --- GLASS CARD WRAPPER (Applied to Streamlit Border Container) --- */
 /* Target the new st.container(border=True) */
 [data-testid="stVerticalBlockBorderWrapper"] {
-    background: rgba(255, 255, 255, 0.85); /* Much whiter/cleaner as per screenshot */
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border: 1px solid rgba(255, 255, 255, 0.5) !important; /* Subtle white border */
-    box-shadow: 0 20px 50px -12px rgba(14, 165, 233, 0.15); /* Soft Blue Glow */
+    background: rgba(255, 255, 255, 0.60); /* Match local glass opacity */
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 3px solid #93c5fd !important; /* Match local 3px Blue Fixed Border */
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.02),
+        0 20px 40px -12px rgba(14, 165, 233, 0.1); /* Match local shadows */
     border-radius: 20px;
     padding: 3rem !important;
     margin-top: 1rem;
