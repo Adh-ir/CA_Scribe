@@ -34,6 +34,14 @@ st.markdown("""
         background: transparent !important;
         background-color: transparent !important;
     }
+    /* Remove Sidebar/Main Padding for Fullscreen Loader */
+    .block-container {
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+        max-width: 100% !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -102,7 +110,7 @@ LOADING_HTML = """
     const elSub = document.getElementById('dom-sub');
 
     const CONFIG = {
-      formationDuration: 5000, 
+      formationDuration: 8000, 
       densityStep: 1, 
       colors: { ca: '#003B5C', scribe: '#005F88', star: '#0ea5e9', subtitle: '#334155' },
       offsetX: 2, 
@@ -254,7 +262,7 @@ LOADING_HTML = """
              // Not used here, we jump to Forming
         } else if (currentState === STATE.FORMING) {
             targetSize = this.formationSize; 
-            const crystallizeStart = 3500; 
+            const crystallizeStart = 5000; 
             
             if (elapsedFormation < this.arrivalDuration) {
                const dx = this.tx - this.x;
@@ -274,7 +282,7 @@ LOADING_HTML = """
                this.y += swirlY * 0.05;
                
             } else {
-               const p = (elapsedFormation - crystallizeStart) / (5000 - crystallizeStart);
+               const p = (elapsedFormation - crystallizeStart) / (8000 - crystallizeStart);
                const clampedP = Math.max(0, Math.min(1, p));
                const ease = clampedP < 0.5 ? 2 * clampedP * clampedP : 1 - Math.pow(-2 * clampedP + 2, 2) / 2;
                const currentSwirlRange = this.swirlRange * (1 - ease);
@@ -322,7 +330,7 @@ LOADING_HTML = """
         }
       }
       
-      if (elapsedFormation > 4200) {
+      if (elapsedFormation > 7000) {
          document.body.classList.add('cross-fade');
       }
       
@@ -352,8 +360,19 @@ if not st.session_state.loading_complete:
     # Render Animation
     components.html(LOADING_HTML, height=800)
     
-    # Wait for animation to finish
-    time.sleep(5.5)
+    # --- BACKGROUND LOADING START ---
+    t_start = time.time()
+    
+    # Perform expensive loading HERE while animation is running on frontend
+    if st.session_state.framework_data is None:
+        st.session_state.framework_data = load_competency_framework()
+        
+    # Wait remaining time (Total 8.5s)
+    elapsed = time.time() - t_start
+    remaining = 8.5 - elapsed
+    if remaining > 0:
+        time.sleep(remaining)
+    # --- BACKGROUND LOADING END ---
     
     st.session_state.loading_complete = True
     st.rerun()
@@ -361,7 +380,7 @@ if not st.session_state.loading_complete:
 # --- APP START ---
 if "framework_data" not in st.session_state:
     st.session_state.framework_data = None
-
+    
 if "markdown_report" not in st.session_state:
     st.session_state.markdown_report = ""
 
@@ -510,12 +529,8 @@ def show_main_page():
         </div>
     """, unsafe_allow_html=True)
 
-    # Lazy Load Framework (Non-blocking UI if possible, but st.spinner blocks)
-    if st.session_state.framework_data is None:
-        # We put the spinner inside a placeholder to make it less intrusive?
-        # Or just show it.
-        with st.spinner("Initializing AI Cortex..."):
-            st.session_state.framework_data = load_competency_framework()
+
+    # --- Main Content (Glass Card Layout) ---
 
     # --- Main Content (Glass Card Layout) ---
     container = st.container()
