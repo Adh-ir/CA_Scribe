@@ -296,6 +296,15 @@ div[class*="stHorizontalBlock"] {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02),
                 0 20px 40px -12px rgba(14, 165, 233, 0.1) !important;
     margin-top: -40px !important;
+    transition: none !important;
+    animation: none !important;
+}
+
+/* Prevent focus-related visual changes on horizontal block */
+div[class*="stHorizontalBlock"]:focus,
+div[class*="stHorizontalBlock"]:focus-within {
+    border: 4px solid #93c5fd !important;
+    outline: none !important;
 }
 
 /* --- LOGO STYLES (From Local Index.html) --- */
