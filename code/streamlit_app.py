@@ -29,11 +29,18 @@ st.set_page_config(
 # Force global styles immediately
 st.markdown("""
     <style>
-    /* Force Transparent Background always */
-    .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+    /* Force Transparent Background for App */
+    .stApp, [data-testid="stAppViewContainer"] {
         background: transparent !important;
         background-color: transparent !important;
     }
+    
+    /* Header Background - MATCH ANIMATION BLUE */
+    header, [data-testid="stHeader"] {
+        background: #7dd3fc !important; 
+        background-color: #7dd3fc !important;
+    }
+    
     /* Remove Sidebar/Main Padding for Fullscreen Loader */
     .block-container {
         padding-top: 0rem !important;
