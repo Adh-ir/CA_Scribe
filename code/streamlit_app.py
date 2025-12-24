@@ -19,6 +19,7 @@ try:
 except Exception:
     favicon = "static/favicon.png" # Fallback
 
+st.set_page_config(
     page_title="CA Scribe",
     page_icon=favicon,
     layout="centered",
