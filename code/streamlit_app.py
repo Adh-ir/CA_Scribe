@@ -5,10 +5,10 @@ import sys
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from code.utils.streamlit_styles import SETUP_CSS, MAIN_CSS
-from code.ingestion.framework_loader import load_competency_framework
-from code.analysis.mapper import map_activity_to_competency
-from code.reporting.generator import generate_markdown_content
+from utils.streamlit_styles import SETUP_CSS, MAIN_CSS
+from ingestion.framework_loader import load_competency_framework
+from analysis.mapper import map_activity_to_competency
+from reporting.generator import generate_markdown_content
 
 # --- 1. CONFIG & STATE ---
 st.set_page_config(
