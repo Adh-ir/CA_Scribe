@@ -51,7 +51,7 @@ st.markdown("""
     /* Custom Semi-Wide Layout (User Requested "Halfway" Width) */
     .block-container {
         max-width: 1200px !important;
-        padding-top: 2rem !important;
+        padding-top: 0rem !important;
         padding-bottom: 2rem !important;
         padding-left: 2rem !important;
         padding-right: 2rem !important;
