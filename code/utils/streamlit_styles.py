@@ -281,9 +281,8 @@ html, body, [class*="css"] {
 }
 
 /* TARGETED FIX: Make the main columns container white */
-/* CONTAINER FIX: Force internal structure blocks to be white */
-[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stHorizontalBlock"],
-[data-testid="stVerticalBlockBorderWrapper"] [class*="stHorizontalBlock"] {
+/* NUCLEAR FIX: Force ALL Horizontal Blocks to be White + Padded */
+div[class*="stHorizontalBlock"] {
     background-color: #ffffff !important;
     border-radius: 20px;
     padding: 15px !important;
