@@ -64,6 +64,33 @@ st.markdown("""
 if "loading_complete" not in st.session_state:
     st.session_state.loading_complete = False
 
+if not st.session_state.loading_complete:
+    # Fullscreen iframe hack & PADDING OVERRIDE
+    st.markdown("""
+        <style>
+        /* Override the global 1200px limit during loading */
+        .block-container {
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        /* Match Background to Blue Gradient (Hides white bars) */
+        .stApp, [data-testid="stAppViewContainer"] {
+            background: linear-gradient(135deg, #7dd3fc 0%, #bae6fd 100%) !important;
+        }
+        
+        iframe[title="streamlit.components.v1.html"] {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 999999;
+            border: none;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 LOADING_HTML = """
 <!DOCTYPE html>
 <html lang="en">
@@ -544,13 +571,13 @@ def show_main_page():
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; margin-bottom: 2rem;">
             <div>
                 <div style="display: flex; align-items: baseline; gap: 0.25rem;">
-                    <span class="logo-main" style="font-size: 2.25rem;">CA</span>
-                    <span class="logo-scribe" style="font-size: 2.25rem; position: relative;">
+                    <span class="logo-main" style="font-size: 2.75rem;">CA</span>
+                    <span class="logo-scribe" style="font-size: 2.75rem; position: relative;">
                         Scribe 
-                        <span style="font-size: 1rem; color: #0ea5e9; position: absolute; top: -5px; right: -15px;">✦</span>
+                        <span style="font-size: 1.25rem; color: #0ea5e9; position: absolute; top: -6px; right: -20px;">✦</span>
                     </span>
                 </div>
-                <div style="font-size: 0.875rem; color: #64748b; font-weight: 500; margin-top: 5px; letter-spacing: 0.025em; padding-left: 0.25rem;">AI-Powered Competency Mapper</div>
+                <div style="font-size: 1rem; color: #64748b; font-weight: 500; margin-top: 5px; letter-spacing: 0.025em; padding-left: 0.25rem;">AI-Powered Competency Mapper</div>
             </div>
             <div>
                 <button style="
