@@ -251,12 +251,10 @@ html, body, [class*="css"] {
 /* --- GLASS CARD WRAPPER (Applied to Streamlit Border Container) --- */
 /* Target the new st.container(border=True) */
 [data-testid="stVerticalBlockBorderWrapper"] {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    opacity: 1 !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    border: 3px solid #93c5fd !important;
+    background: rgba(255, 255, 255, 0.60); /* Match local glass opacity */
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 3px solid #93c5fd !important; /* Match local 3px Blue Fixed Border */
     box-shadow:
         0 4px 6px -1px rgba(0, 0, 0, 0.02),
         0 20px 40px -12px rgba(14, 165, 233, 0.1);
@@ -266,22 +264,13 @@ html, body, [class*="css"] {
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
-    /* Ensure stacking context */
     position: relative !important;
     z-index: 1 !important;
-    isolation: isolate !important;
 }
 
-/* Ensure inner content also paints white if wrapper fails */
+/* Hide the default tiny border Streamlit adds */
 [data-testid="stVerticalBlockBorderWrapper"] > div {
     border: none !important;
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-}
-
-/* Aggressive Fallback: Target the vertical block itself */
-[data-testid="stVerticalBlock"] {
-    background-color: #ffffff !important;
 }
 
 /* --- LOGO STYLES (From Local Index.html) --- */
