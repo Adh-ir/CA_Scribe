@@ -281,10 +281,9 @@ html, body, [class*="css"] {
 }
 
 /* TARGETED FIX: Make the main columns container white */
-/* TARGETED FIX: Make the main columns container white */
-[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stHorizontalBlock"]:has(.stTextArea),
-[data-testid="stVerticalBlockBorderWrapper"] [class*="stHorizontalBlock"]:has(.stTextArea),
-[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stHorizontalBlock"]:has(.stSelectbox) {
+/* CONTAINER FIX: Force internal structure blocks to be white */
+[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stHorizontalBlock"],
+[data-testid="stVerticalBlockBorderWrapper"] [class*="stHorizontalBlock"] {
     background-color: #ffffff !important;
     border-radius: 20px;
     padding: 15px !important;
