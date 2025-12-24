@@ -44,8 +44,6 @@ for k, v in keys.items():
 
 # --- 3. UI: SETUP PAGE ---
 def show_setup_page():
-# --- 3. UI: SETUP PAGE ---
-def show_setup_page():
     # Inject CSS
     st.markdown(SETUP_CSS, unsafe_allow_html=True)
     
