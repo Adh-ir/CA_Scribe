@@ -1,7 +1,14 @@
 
+# Common Fonts (Separate to avoid @import warnings)
+FONT_LINKS = """
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+"""
+
 SETUP_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,600&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Font import handled via FONT_LINKS */
 
 /* Force Font globally */
 html, body, [class*="css"] {
@@ -176,7 +183,7 @@ label {
 
 MAIN_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,600&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Font import handled via FONT_LINKS */
 
 /* Base Font */
 html, body, [class*="css"] {

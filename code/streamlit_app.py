@@ -8,7 +8,7 @@ from PIL import Image
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from utils.streamlit_styles import SETUP_CSS, MAIN_CSS
+from utils.streamlit_styles import SETUP_CSS, MAIN_CSS, FONT_LINKS
 from ingestion.framework_loader import load_competency_framework
 from analysis.mapper import map_activity_to_competency
 from reporting.generator import generate_markdown_content
@@ -450,6 +450,7 @@ for k, v in keys.items():
 # --- 3. UI: SETUP PAGE ---
 def show_setup_page():
     # Inject CSS
+    st.markdown(FONT_LINKS, unsafe_allow_html=True)
     st.markdown(SETUP_CSS, unsafe_allow_html=True)
     
     # Background Elements
@@ -557,6 +558,7 @@ def show_setup_page():
 # --- 4. UI: MAIN PAGE ---
 def show_main_page():
     # Inject Styles & Background
+    st.markdown(FONT_LINKS, unsafe_allow_html=True)
     st.markdown(MAIN_CSS, unsafe_allow_html=True)
     st.markdown('<div class="fluid-bg"><div class="fluid-shape shape-1"></div><div class="fluid-shape shape-2"></div><div class="fluid-shape shape-3"></div></div>', unsafe_allow_html=True)
     
