@@ -581,7 +581,7 @@ def show_main_page():
                         <span style="font-size: 1.25rem; color: #0ea5e9; position: absolute; top: -6px; right: -20px;">✦</span>
                     </span>
                 </div>
-                <div style="font-size: 1rem; color: #64748b; font-weight: 500; margin-top: 5px; letter-spacing: 0.025em; padding-left: 0.25rem;">AI-Powered Competency Mapper</div>
+                <div style="font-size: 1rem; color: #64748b; font-weight: 500; margin-top: -5px; letter-spacing: 0.025em; padding-left: 0.25rem;">AI-Powered Competency Mapper</div>
             </div>
             <div>
                 <button style="
