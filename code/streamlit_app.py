@@ -667,7 +667,7 @@ def show_setup_page():
             # Helper Link
             st.markdown("""
                 <div style="text-align: center; margin-top: 0.5rem; margin-bottom: 0.5rem;">
-                    <a href="https://github.com/Adh-ir/CA_Scribe" target="_blank" style="color: #64748b; font-size: 0.8rem; text-decoration: none; font-weight: 500; transition: color 0.2s;">
+                    <a href="/?page=guide" target="_self" style="color: #64748b; font-size: 0.8rem; text-decoration: none; font-weight: 500; transition: color 0.2s;">
                         Need help getting keys? View Guide ↗
                     </a>
                 </div>
@@ -914,8 +914,34 @@ def show_main_page():
     """
     st.markdown(footer_html, unsafe_allow_html=True)
 
-# --- 5. APP CONTROLLER ---
-if has_access:
-    show_main_page()
-else:
-    show_setup_page()
+# --- 5. GUIDE PAGE ---
+def show_guide_page():
+    try:
+        template_path = os.path.join(os.path.dirname(__file__), "templates", "guide.html")
+        with open(template_path, "r") as f:
+            html_content = f.read()
+        
+        # Inject HTML content (Tailwind CDN in template will load)
+        st.markdown(html_content, unsafe_allow_html=True)
+        
+    except Exception as e:
+        st.error(f"Could not load guide: {e}")
+        st.info("Ensure 'code/templates/guide.html' exists in the repository.")
+
+# --- 6. APP CONTROLLER ---
+if __name__ == "__main__":
+    # Check query params for routing
+    try:
+        # Streamlit 1.30+
+        query_params = st.query_params
+        page = query_params.get("page")
+    except:
+        # Fallback
+        page = None
+
+    if page == "guide":
+        show_guide_page()
+    elif has_access:
+        show_main_page()
+    else:
+        show_setup_page()
