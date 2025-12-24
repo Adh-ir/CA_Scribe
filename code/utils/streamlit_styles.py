@@ -269,6 +269,7 @@ html, body, [class*="css"] {
     /* Ensure stacking context */
     position: relative !important;
     z-index: 1 !important;
+    isolation: isolate !important;
 }
 
 /* Ensure inner content also paints white if wrapper fails */
@@ -276,6 +277,11 @@ html, body, [class*="css"] {
     border: none !important;
     background-color: #ffffff !important;
     background: #ffffff !important;
+}
+
+/* Aggressive Fallback: Target the vertical block itself */
+[data-testid="stVerticalBlock"] {
+    background-color: #ffffff !important;
 }
 
 /* --- LOGO STYLES (From Local Index.html) --- */
