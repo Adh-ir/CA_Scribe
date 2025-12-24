@@ -284,14 +284,6 @@ html, body, [class*="css"] {
     background-color: #ffffff !important;
 }
 
-/* TARGET SPECIFIC CONTAINERS IDENTIFIED BY USER */
-[data-testid="stVerticalBlockBorderWrapper"] [class*="stVerticalBlock"],
-[data-testid="stVerticalBlockBorderWrapper"] [class*="stHorizontalBlock"],
-[data-testid="stVerticalBlockBorderWrapper"] [class*="st-emotion-cache"] {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-}
-
 /* --- LOGO STYLES (From Local Index.html) --- */
 .logo-main {
     font-family: 'Inter', sans-serif;
@@ -310,9 +302,9 @@ html, body, [class*="css"] {
 /* --- UI ELEMENTS --- */
 
 /* Text Area & Inputs */
-.stTextArea textarea, .stSelectbox div[data-baseweb="select"] {
+.stTextArea textarea, .stSelectbox div[data-baseweb="select"], .stTextInput input {
     border: 1px solid #cbd5e1;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #ffffff !important; /* Solid White Items */
     border-radius: 1rem;
     color: #1e293b;
 }
