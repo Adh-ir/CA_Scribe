@@ -543,9 +543,14 @@ def show_main_page():
     st.markdown("""
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; margin-bottom: 2rem;">
             <div>
-                <span class="logo-main" style="font-size: 2rem;">CA</span>
-                <span class="logo-scribe" style="font-size: 2rem;">Scribe <span style="font-size: 1rem; color: #0ea5e9; vertical-align: top;">✦</span></span>
-                <div style="font-size: 0.8rem; color: #64748b; font-weight: 500; margin-top: -5px;">AI-Powered Competency Mapper</div>
+                <div style="display: flex; align-items: baseline; gap: 0.25rem;">
+                    <span class="logo-main" style="font-size: 2.25rem;">CA</span>
+                    <span class="logo-scribe" style="font-size: 2.25rem; position: relative;">
+                        Scribe 
+                        <span style="font-size: 1rem; color: #0ea5e9; position: absolute; top: -5px; right: -15px;">✦</span>
+                    </span>
+                </div>
+                <div style="font-size: 0.875rem; color: #64748b; font-weight: 500; margin-top: 5px; letter-spacing: 0.025em; padding-left: 0.25rem;">AI-Powered Competency Mapper</div>
             </div>
             <div>
                 <button style="

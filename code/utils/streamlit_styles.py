@@ -269,6 +269,21 @@ html, body, [class*="css"] {
     border: none !important;
 }
 
+/* --- LOGO STYLES (From Local Index.html) --- */
+.logo-main {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #003B5C !important;
+}
+
+.logo-scribe {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 600;
+    color: #005F88 !important;
+}
+
 /* --- UI ELEMENTS --- */
 
 /* Text Area & Inputs */
