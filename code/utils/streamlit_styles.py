@@ -283,7 +283,7 @@ html, body, [class*="css"] {
 /* TARGETED FIX: Make the main columns container white */
 /* Lift the entire app container (Header + Content) closer to top */
 .block-container {
-    padding-top: 1rem !important;
+    padding-top: 15px !important;
     padding-bottom: 1rem !important;
 }
 
@@ -295,7 +295,7 @@ div[class*="stHorizontalBlock"] {
     border: 4px solid #93c5fd !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02),
                 0 20px 40px -12px rgba(14, 165, 233, 0.1) !important;
-    margin-top: -30px !important;
+    margin-top: -50px !important;
 }
 
 /* --- LOGO STYLES (From Local Index.html) --- */

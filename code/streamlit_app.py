@@ -572,7 +572,7 @@ def show_main_page():
     
     # --- HEADER (Outside Card) ---
     st.markdown("""
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 2rem;">
             <div>
                 <div style="display: flex; align-items: baseline; gap: 0.25rem;">
                     <span class="logo-main" style="font-size: 2.75rem;">CA</span>
