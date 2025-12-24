@@ -682,65 +682,7 @@ def show_setup_page():
                 </div>
             """, unsafe_allow_html=True)
 
-        # Comprehensive Documentation Expander (matching guide.html)
-        with st.expander("📘 Need Help? View Detailed API Key Guide"):
-            st.markdown("""
-            ### 🔑 How to Get Your API Keys
-            
-            Choose one or more providers below. All offer free tiers perfect for CA Scribe.
-            
-            ---
-            
-            #### ✨ **Google Gemini (Recommended)**
-            
-            1. Go to **[Google AI Studio](https://aistudio.google.com/app/apikey)**.
-            2. Sign in with your Google Account.
-            3. Click **"Create API key"**.
-            4. Select **"Create key in new project"** (or choose an existing project).
-            5. Copy the key starting with `AIza...` and paste it above.
-            
-            **Why Gemini?** Free tier, excellent quality, and optimized for complex analysis.
-            
-            ---
-            
-            #### ⚡ **Groq (Fastest)**
-            
-            1. Go to **[Groq Console](https://console.groq.com/keys)**.
-            2. Sign in with Google.
-            3. Click **"Create API Key"**.
-            4. Give it any name (e.g., "CA Scribe").
-            5. Copy the key starting with `gsk_...` and paste it above.
-            
-            **Why Groq?** Blazing fast inference with Llama 3 models.
-            
-            ---
-            
-            #### 🐙 **GitHub Models (OpenAI GPT-4o)**
-            
-            **Option 1: Personal Access Token**
-            1. Go to **[GitHub Settings > Developer Settings](https://github.com/settings/tokens)**.
-            2. Select **"Personal access tokens (classic)"**.
-            3. Click **"Generate new token (classic)"**.
-            4. **Note:** You do NOT need any specific scopes/permissions for Models.
-            5. Copy the token starting with `ghp_...` and paste it above.
-            
-            **Option 2: Marketplace Access**
-            - Alternatively, sign up for **[GitHub Models Marketplace](https://github.com/marketplace/models)** access if prompted.
-            
-            **Why GitHub?** Access to OpenAI's GPT-4o and GPT-4o-mini models through Azure.
-            
-            ---
-            
-            ### 🔒 Privacy & Security
-            
-            - All API keys are stored locally in your `.streamlit/secrets.toml` file
-            - No keys are ever sent to external servers (except your chosen AI provider)
-            - You can delete or update keys anytime through the Settings modal
-            
-            ### ❓ Need More Help?
-            
-            If you encounter any issues, please visit the [CA Scribe GitHub repository](https://github.com/Adh-ir/CA_Scribe) or report an issue.
-            """)
+
 
 
 # --- 4. UI: MAIN PAGE ---
