@@ -140,12 +140,7 @@ header {visibility: hidden;}
         0 20px 40px -12px rgba(14, 165, 233, 0.15);
     border-radius: 24px;
     padding: 2.5rem;
-    animation: cardFloat 6s ease-in-out infinite alternate;
-}
-
-@keyframes cardFloat {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-8px); }
+    animation: none !important;
 }
 
 /* --- LOGO STYLES --- */

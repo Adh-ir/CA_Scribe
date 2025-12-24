@@ -589,7 +589,7 @@ def show_setup_page():
                 <div style="font-family: 'Inter', sans-serif; font-weight: 600; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.85rem; margin-top: -0.25rem;">
                     AI-Powered Competency Mapper
                 </div>
-                <div style="font-family: 'Inter', sans-serif; font-weight: 500; color: #ffffff; font-size: 0.95rem; margin-top: 2rem; line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                <div style="font-family: 'Inter', sans-serif; font-weight: 500; color: #1e3a8a; font-size: 0.95rem; margin-top: 2rem; line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto; text-shadow: none;">
                     Please retrieve and install one or all of the API keys below to get access to each model
                 </div>
             </div>
