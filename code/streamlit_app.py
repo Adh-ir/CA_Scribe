@@ -42,10 +42,10 @@ st.markdown("""
         background-color: transparent !important;
     }
     
-    /* Header Background - MATCH ANIMATION BLUE */
+    /* Hide Streamlit Header/Toolbar */
     header, [data-testid="stHeader"] {
-        background: #7dd3fc !important; 
-        background-color: #7dd3fc !important;
+        display: none !important;
+        visibility: hidden !important;
     }
     
     /* Custom Semi-Wide Layout (User Requested "Halfway" Width) */
