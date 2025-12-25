@@ -336,7 +336,10 @@ def show_main_page():
     
     # --- HEADER (Outside Card) ---
     # --- HEADER (Outside Card) ---
-    header_col1, header_col2 = st.columns([5, 1])
+    # Use columns to mimic the flexbox "justify-between" layout
+    # [Logo Area --------------------------------------] [Settings Button]
+    header_col1, header_col2 = st.columns([8, 1.2]) 
+    
     with header_col1:
         st.markdown("""
             <div style="margin-bottom: 2rem;">
@@ -352,8 +355,20 @@ def show_main_page():
         """, unsafe_allow_html=True)
     
     with header_col2:
-        st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
-        if st.button("⚙️ Settings", type="secondary", use_container_width=True):
+        # Align button to the bottom to match logo baseline
+        st.markdown("""
+            <style>
+            /* Specific styling for the settings button container to align it */
+            div[data-testid="column"]:nth-of-type(2) {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                padding-top: 15px; /* Visual alignment with logo */
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        # Use a secondary button that looks cleaner
+        if st.button("🟢 Settings", key="settings_btn", type="secondary", use_container_width=True):
              st.session_state.view_mode = "settings"
              st.rerun()
     
