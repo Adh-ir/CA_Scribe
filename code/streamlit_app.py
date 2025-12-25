@@ -10,7 +10,15 @@ from PIL import Image
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from utils.streamlit_styles import SETUP_CSS, MAIN_CSS, FONT_LINKS
+from utils.streamlit_styles import (
+    SETUP_CSS, 
+    MAIN_CSS, 
+    FONT_LINKS, 
+    GLOBAL_HACKS_CSS, 
+    FOCUS_FIX_JS,
+    LOADING_MODE_CSS
+)
+from utils.html_templates import LOADING_HTML
 from ingestion.framework_loader import load_competency_framework
 from analysis.mapper import map_activity_to_competency
 from reporting.generator import generate_markdown_content
@@ -36,134 +44,9 @@ if "markdown_report" not in st.session_state:
     st.session_state.markdown_report = ""
 
 # Force global styles immediately
-st.markdown("""
-    <style>
-    /* Force Transparent Background for App */
-    .stApp, [data-testid="stAppViewContainer"] {
-        background: transparent !important;
-        background-color: transparent !important;
-    }
-    
-    /* Hide Streamlit Header/Toolbar */
-    header, [data-testid="stHeader"] {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    
-    /* Custom Semi-Wide Layout (User Requested "Halfway" Width) */
-    .block-container {
-        max-width: 1200px !important;
-        padding-top: 0rem !important;
-        padding-bottom: 2rem !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
-        margin-top: -40px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
-    
-    /* Remove blue flash/focus ring from entire container */
-    .block-container:focus,
-    .block-container:focus-within,
-    [data-testid="stAppViewContainer"]:focus,
-    [data-testid="stAppViewContainer"]:focus-within,
-    .main:focus,
-    .main:focus-within {
-        outline: 0 !important;
-        outline-width: 0 !important;
-        outline-style: none !important;
-        outline-color: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        -webkit-tap-highlight-color: transparent !important;
-    }
-    
-    /* Nuclear option: Remove ALL focus indicators from EVERYTHING */
-    *,
-    *:before,
-    *:after {
-        outline: 0 !important;
-        outline-width: 0 !important;
-        -webkit-tap-highlight-color: transparent !important;
-    }
-    
-    *:focus,
-    *:active,
-    *:focus-visible,
-    *:focus-within {
-        outline: 0 !important;
-        outline-width: 0 !important;
-        outline-style: none !important;
-        outline-color: transparent !important;
-        box-shadow: none !important;
-        border-color: inherit !important;
-        -webkit-tap-highlight-color: transparent !important;
-    }
-    
-    /* Prevent Streamlit's default focus behavior */
-    .stApp *:focus,
-    .stApp *:active {
-        outline: 0 !important;
-        box-shadow: none !important;
-    }
-    
-    /* TARGET THE SPECIFIC CONTAINERS THAT FLASH BLUE */
-    [data-testid="stHorizontalBlock"],
-    [data-testid="stHorizontalBlock"]:focus,
-    [data-testid="stHorizontalBlock"]:focus-within,
-    [data-testid="stColumn"],
-    [data-testid="stColumn"]:focus,
-    [data-testid="stColumn"]:focus-within,
-    [data-testid="stVerticalBlock"],
-    [data-testid="stVerticalBlock"]:focus,
-    [data-testid="stVerticalBlock"]:focus-within {
-        outline: 0 !important;
-        outline-width: 0 !important;
-        outline-style: none !important;
-        outline-color: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        -webkit-tap-highlight-color: transparent !important;
-    }
-    </style>
-    <script>
-    // Prevent focus-related visual feedback on all elements
-    document.addEventListener('DOMContentLoaded', function() {
-        // Prevent focus on containers
-        document.addEventListener('focusin', function(e) {
-            const target = e.target;
-            if (target.hasAttribute('data-testid')) {
-                const testId = target.getAttribute('data-testid');
-                if (testId.includes('Horizontal') || testId.includes('Column') || testId.includes('Vertical')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    target.blur();
-                }
-            }
-        }, true);
-        
-        // Specifically prevent textarea visual feedback after value changes
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                mutation.addedNodes.forEach(function(node) {
-                    if (node.tagName === 'TEXTAREA' || (node.querySelector && node.querySelector('textarea'))) {
-                        const textareas = node.tagName === 'TEXTAREA' ? [node] : node.querySelectorAll('textarea');
-                        textareas.forEach(function(textarea) {
-                            textarea.addEventListener('focus', function(e) {
-                                // Prevent default focus visual feedback
-                                e.target.style.boxShadow = 'none';
-                                e.target.style.borderColor = '#cbd5e1';
-                            });
-                        });
-                    }
-                });
-            });
-        });
-        
-        observer.observe(document.body, { childList: true, subtree: true });
-    });
-    </script>
-""", unsafe_allow_html=True)
+# Force global styles immediately
+st.markdown(GLOBAL_HACKS_CSS, unsafe_allow_html=True)
+st.markdown(FOCUS_FIX_JS, unsafe_allow_html=True)
 
 # --- LOADING ANIMATION (Local & Cloud Compatible) ---
 if "loading_complete" not in st.session_state:
@@ -176,383 +59,12 @@ if "loading_complete" not in st.session_state:
         pass
     st.session_state.loading_complete = should_skip
 
-if not st.session_state.loading_complete:
-    # Fullscreen iframe hack & PADDING OVERRIDE
-    st.markdown("""
-        <style>
-        /* Override the global 1200px limit during loading */
-        .block-container {
-            max-width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        
-        /* Match Background to Blue Gradient (Hides white bars) */
-        .stApp, [data-testid="stAppViewContainer"] {
-            background: linear-gradient(135deg, #7dd3fc 0%, #bae6fd 100%) !important;
-        }
-        
-        iframe[title="streamlit.components.v1.html"] {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 999999;
-            border: none;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-LOADING_HTML = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-  <style>
-    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); font-family: 'Inter', sans-serif; }
-    #container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-    #introCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; transition: opacity 1.5s ease-out; }
-    #precise-text { position: relative; z-index: 2; opacity: 0; transition: opacity 1.5s ease-out; display: flex; flex-direction: column; align-items: center; justify-content: center; -webkit-font-smoothing: antialiased; top: -70px; }
-    #loading-label { 
-        position: absolute; 
-        top: calc(50% - 70px); 
-        left: 50%; 
-        transform: translate(-50%, -50%); 
-        font-family: 'Inter', sans-serif; 
-        font-weight: 300; 
-        font-size: 24px; 
-        letter-spacing: 0.2em;
-        color: #003B5C; 
-        opacity: 1; 
-        transition: opacity 1.0s ease-out;
-        z-index: 2;
-    }
-    .brand-row { display: flex; align-items: center; line-height: 1; }
-    .brand-ca { font-family: 'Inter', sans-serif; font-weight: 800; color: #003B5C; }
-    .brand-scribe { font-family: 'Playfair Display', serif; font-weight: 600; font-style: italic; color: #005F88; margin-left: 0.15em; }
-    .brand-star { color: #0ea5e9; margin-left: 0.15em; margin-bottom: 0.4em; }
-    .brand-subtitle { font-family: 'Inter', sans-serif; font-weight: 600; color: #334155; margin-top: 15px; letter-spacing: 0.02em; }
-    .cross-fade #introCanvas { opacity: 0; }
-    .cross-fade #precise-text { opacity: 1; }
-    .cross-fade #loading-label { opacity: 0; }
 
-    /* Fluid Background Animation */
-    .fluid-shape {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.4;
-        animation: fluid-move 14s infinite ease-in-out;
-        will-change: transform;
-        mix-blend-mode: multiply;
-        z-index: 0;
-    }
-    .shape-1 { background: #7dd3fc; width: 65vw; height: 65vw; top: -15%; left: -10%; animation-duration: 16s; }
-    .shape-2 { background: #bae6fd; width: 70vw; height: 70vw; top: 25%; right: -25%; animation-duration: 20s; animation-delay: -4s; }
-    .shape-3 { background: #a5f3fc; width: 55vw; height: 55vw; bottom: -15%; left: 15%; animation-duration: 14s; animation-delay: -8s; }
-    @keyframes fluid-move {
-        0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-        33% { transform: translate(45px, 65px) scale(1.1) rotate(8deg); }
-        66% { transform: translate(-35px, 25px) scale(0.9) rotate(-6deg); }
-        100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-    }
-  </style>
-</head>
-<body>
-    <div class="fluid-shape shape-1"></div>
-    <div class="fluid-shape shape-2"></div>
-    <div class="fluid-shape shape-3"></div>
-  <div id="container">
-    <canvas id="introCanvas"></canvas>
-    <div id="loading-label">LOADING...</div>
-    <div id="precise-text">
-       <div class="brand-row">
-          <span class="brand-ca" id="dom-ca">CA</span>
-          <span class="brand-scribe" id="dom-scribe">Scribe</span>
-          <svg class="brand-star" id="dom-star" width="0" height="0" viewBox="0 0 24 24" fill="currentColor">
-             <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-          </svg>
-       </div>
-       <div class="brand-subtitle" id="dom-sub">AI-Powered Competency Mapper</div>
-    </div>
-  </div>
-
-  <script>
-    const canvas = document.getElementById('introCanvas');
-    const ctx = canvas.getContext('2d');
-    const elCA = document.getElementById('dom-ca');
-    const elScribe = document.getElementById('dom-scribe');
-    const elStar = document.getElementById('dom-star');
-    const elSub = document.getElementById('dom-sub');
-
-    const CONFIG = {
-      formationDuration: 8000, 
-      densityStep: 1, 
-      colors: { ca: '#003B5C', scribe: '#005F88', star: '#0ea5e9', subtitle: '#334155' },
-      offsetX: 2, 
-      offsetY: 6
-    };
-
-    let width, height;
-    let particles = [];
-    
-    // STATE MACHINE
-    const STATE = { WAITING: 0, FORMING: 1, DONE: 2 };
-    
-    // START IMMEDIATELY
-    let currentState = STATE.FORMING;
-    let formationStartTime = null;
-
-    document.fonts.ready.then(() => { setTimeout(init, 100); });
-
-    function resize() {
-      const dpr = window.devicePixelRatio || 1;
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = width + 'px';
-      canvas.style.height = height + 'px';
-      ctx.scale(dpr, dpr);
-      
-      const mainSize = Math.min(width / 6, 120);
-      elCA.style.fontSize = mainSize + 'px';
-      elScribe.style.fontSize = mainSize + 'px';
-      const starSize = mainSize * 0.4;
-      elStar.setAttribute('width', starSize);
-      elStar.setAttribute('height', starSize);
-      elStar.style.width = starSize + 'px';
-      elStar.style.height = starSize + 'px';
-      elSub.style.fontSize = (mainSize * 0.22) + 'px';
-    }
-
-    window.addEventListener('resize', () => { resize(); init(); });
-
-    function getTargetsFromDOM() {
-       const targets = [];
-       const dpr = window.devicePixelRatio || 1;
-       function scanElement(el, color) {
-          const rect = el.getBoundingClientRect();
-          const style = window.getComputedStyle(el);
-          const tmp = document.createElement('canvas');
-          tmp.width = width * dpr;
-          tmp.height = height * dpr;
-          const tCtx = tmp.getContext('2d');
-          tCtx.scale(dpr, dpr);
-          tCtx.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-          tCtx.textBaseline = 'top'; 
-          tCtx.fillStyle = color;
-          tCtx.fillText(el.innerText, rect.left + CONFIG.offsetX, rect.top + CONFIG.offsetY); 
-          const imgData = tCtx.getImageData(0, 0, width * dpr, height * dpr).data;
-          const step = CONFIG.densityStep * dpr;
-          const sY = Math.max(0, Math.floor((rect.top+CONFIG.offsetY-20)*dpr));
-          const eY = Math.min(height*dpr, Math.floor((rect.bottom+CONFIG.offsetY+20)*dpr));
-          const sX = Math.max(0, Math.floor((rect.left+CONFIG.offsetX-20)*dpr));
-          const eX = Math.min(width*dpr, Math.floor((rect.right+CONFIG.offsetX+20)*dpr));
-
-           for (let y = sY; y < eY; y += step) { 
-             for (let x = sX; x < eX; x += step) {
-               if (imgData[(y * width * dpr + x) * 4 + 3] > 200) {
-                 targets.push({ x: x / dpr, y: y / dpr, color: color });
-               }
-             }
-           }
-       }
-       scanElement(elCA, CONFIG.colors.ca);
-       scanElement(elScribe, CONFIG.colors.scribe);
-       scanElement(elSub, CONFIG.colors.subtitle);
-
-       const sRect = elStar.getBoundingClientRect();
-       const sTmp = document.createElement('canvas');
-       sTmp.width = width * dpr;
-       sTmp.height = height * dpr;
-       const sCTX = sTmp.getContext('2d');
-       sCTX.scale(dpr, dpr);
-       sCTX.fillStyle = CONFIG.colors.star;
-       
-       const scaleX = sRect.width / 24;
-       const scaleY = sRect.height / 24;
-       sCTX.translate(sRect.left + CONFIG.offsetX, sRect.top + CONFIG.offsetY);
-       sCTX.scale(scaleX, scaleY);
-       sCTX.beginPath();
-       sCTX.moveTo(12, 0); sCTX.lineTo(14.59, 9.41); sCTX.lineTo(24, 12); sCTX.lineTo(14.59, 14.59);
-       sCTX.lineTo(12, 24); sCTX.lineTo(9.41, 14.59); sCTX.lineTo(0, 12); sCTX.lineTo(9.41, 9.41); sCTX.lineTo(12, 0);
-       sCTX.fill();
-       
-       const sData = sCTX.getImageData(0,0,width*dpr, height*dpr).data;
-       const sStep = CONFIG.densityStep * dpr;
-       const syS = Math.floor((sRect.top+CONFIG.offsetY)*dpr);
-       const syE = Math.floor((sRect.bottom+CONFIG.offsetY)*dpr);
-       const sxS = Math.floor((sRect.left+CONFIG.offsetX)*dpr);
-       const sxE = Math.floor((sRect.right+CONFIG.offsetX)*dpr);
-
-       for(let sy=syS; sy<syE; sy+=sStep){
-          for(let sx=sxS; sx<sxE; sx+=sStep){
-             if(sData[(sy * width * dpr + sx) * 4 + 3]>200) {
-                targets.push({x: sx/dpr, y: sy/dpr, color: CONFIG.colors.star});
-             }
-          }
-       }
-       return targets;
-    }
-
-    class Particle {
-      constructor(target, w, h) {
-        this.tx = target.x;
-        this.ty = target.y;
-        this.color = target.color;
-        
-        const r = Math.random();
-        if (r < 0.49) this.formationSize = 0.5;
-        else if (r < 0.74) this.formationSize = 0.5 + Math.random() * 0.5;
-        else if (r < 0.93) this.formationSize = 1.0 + Math.random() * 1.0;
-        else if (r < 0.99) this.formationSize = 2.0 + Math.random() * 1.0;
-        else this.formationSize = 3.0 + Math.random() * 1.0;
-        
-        this.driftSize = this.formationSize; 
-        
-        if (this.formationSize === 0.5) {
-             const r2 = Math.random();
-             if (r2 < 0.10) { 
-                 this.driftSize = 3.0 + Math.random() * 1.0; 
-             } else if (r2 < 0.20) {
-                 this.driftSize = 4.0 + Math.random() * 1.0;
-             }
-        }
-        
-        this.currentSize = this.driftSize;
-        this.x = Math.random() * w; 
-        this.y = Math.random() * h;
-        this.driftVx = -(0.5 + Math.random() * 0.5); 
-        this.phase = Math.random() * Math.PI * 2;
-        this.swirlRange = 15 + Math.random() * 30; 
-        
-        const nx = this.tx / w; 
-        this.arrivalDuration = 1500 + (nx * 1000); 
-      }
-
-      update(time, elapsedFormation) {
-        let targetSize = this.driftSize;
-        
-        if (currentState === STATE.WAITING) {
-             // Not used here, we jump to Forming
-        } else if (currentState === STATE.FORMING) {
-            targetSize = this.formationSize; 
-            const crystallizeStart = 5000; 
-            
-            if (elapsedFormation < this.arrivalDuration) {
-               const dx = this.tx - this.x;
-               const dy = this.ty - this.y;
-               this.x += dx * 0.04; 
-               this.y += dy * 0.04;
-               this.y += Math.sin(this.x * 0.01 + time * 0.002) * 2;
-               
-            } else if (elapsedFormation < crystallizeStart) {
-               const swirlX = Math.cos(time * 0.0015 + this.phase) * this.swirlRange;
-               const swirlY = Math.sin(time * 0.0010 + this.phase) * this.swirlRange; 
-               const dx = this.tx - this.x;
-               const dy = this.ty - this.y;
-               this.x += dx * 0.1;
-               this.y += dy * 0.1;
-               this.x += swirlX * 0.05;
-               this.y += swirlY * 0.05;
-               
-            } else {
-               const p = (elapsedFormation - crystallizeStart) / (8000 - crystallizeStart);
-               const clampedP = Math.max(0, Math.min(1, p));
-               const ease = clampedP < 0.5 ? 2 * clampedP * clampedP : 1 - Math.pow(-2 * clampedP + 2, 2) / 2;
-               const currentSwirlRange = this.swirlRange * (1 - ease);
-               const swirlX = Math.cos(time * 0.0015 + this.phase) * currentSwirlRange;
-               const swirlY = Math.sin(time * 0.0010 + this.phase) * currentSwirlRange;
-               const targetX = this.tx + swirlX; 
-               const targetY = this.ty + swirlY;
-               this.x += (targetX - this.x) * 0.2;
-               this.y += (targetY - this.y) * 0.2;
-            }
-        }
-        this.currentSize += (targetSize - this.currentSize) * 0.05;
-      }
-
-      draw(ctx) {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.currentSize, 0, Math.PI*2);
-        ctx.fill();
-      }
-    }
-
-    function init() {
-      resize();
-      const targets = getTargetsFromDOM();
-      particles = targets.map(t => new Particle(t, width, height));
-      requestAnimationFrame(animate);
-      
-      const lbl = document.getElementById('loading-label');
-      if(lbl) {
-        // Fade out label quickly as we start forming
-        setTimeout(() => lbl.style.opacity = '0', 500);
-      }
-    }
-
-    function animate(timestamp) {
-      if (!formationStartTime) formationStartTime = timestamp;
-      const elapsedFormation = timestamp - formationStartTime;
-      
-      ctx.clearRect(0, 0, width, height);
-      if (particles.length > 0) {
-        for (let i = 0; i < particles.length; i++) {
-          particles[i].update(timestamp, elapsedFormation);
-          particles[i].draw(ctx);
-        }
-      }
-      
-      if (elapsedFormation > 7000) {
-         document.body.classList.add('cross-fade');
-      }
-      
-      requestAnimationFrame(animate);
-    }
-  </script>
-</body>
-</html>
-"""
 
 
 if not st.session_state.loading_complete:
     # Fullscreen iframe hack & PADDING OVERRIDE
-    st.markdown("""
-        <style>
-        /* Hide EVERYTHING at the top */
-        header, .stHeader, [data-testid="stHeader"], [data-testid="stDecoration"], [data-testid="stToolbar"] { 
-            display: none !important; 
-            height: 0 !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-        }
-        
-        /* Force background match */
-        .stApp { background: #e0f2fe !important; }
-        
-        /* Kill container padding */
-        .block-container { 
-            padding-top: 0 !important; 
-            margin-top: 0 !important; 
-        }
-
-        /* Nuclear Iframe Positioning */
-        iframe {
-            position: fixed;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            z-index: 2147483647 !important;
-            border: none !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    st.markdown(LOADING_MODE_CSS, unsafe_allow_html=True)
     
     # Render Animation
     components.html(LOADING_HTML, height=800)
@@ -790,24 +302,33 @@ def show_main_page():
             <style>
             .custom-template-btn {
                 width: 100%;
-                padding: 0.75rem 1rem;
-                background: white;
-                border: 1px solid #e0f2fe;
+                padding: 0.85rem 1.5rem;
+                background: rgba(255, 255, 255, 0.6);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(224, 242, 254, 0.6);
                 border-radius: 0.75rem;
                 color: #0369a1;
                 font-weight: 600;
-                font-size: 1rem;
+                font-size: 0.95rem;
                 text-align: left;
                 cursor: pointer;
-                transition: all 0.2s;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 font-family: 'Inter', sans-serif;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
             .custom-template-btn:hover {
-                background: #f0f9ff;
+                background: rgba(255, 255, 255, 0.9);
                 border-color: #7dd3fc;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.15);
+                color: #0284c7;
             }
             .custom-template-btn:active {
-                transform: scale(0.98);
+                transform: translateY(0);
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
             }
             </style>
             <button class="custom-template-btn" onclick="
@@ -816,7 +337,9 @@ def show_main_page():
                     textarea.value = 'COMPETENCY: [Insert Name] EVIDENCE: ';
                     textarea.dispatchEvent(new Event('input', { bubbles: true }));
                 }
-            ">✨ Target Competency</button>
+            ">
+            <span style="font-size: 1.1em;">✨</span> Target Competency
+            </button>
         """, unsafe_allow_html=True)
         
 
@@ -890,17 +413,17 @@ def show_main_page():
     # Footer
     # Footer
     footer_html = """
-    <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 20px; color: #0284c7; font-family: 'Inter', sans-serif; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+    <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 20px; color: #0284c7; font-family: 'Inter', sans-serif; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 20px 40px -12px rgba(14, 165, 233, 0.1);">
         <p style="margin-bottom: 10px; font-size: 1.1rem; color: #0284c7;">Made by <strong style="color: #075985;">Adhir Singh</strong></p>
         <div style="display: flex; justify-content: center; align-items: center; gap: 20px; transform: translateY(-5px);">
-            <a href="https://github.com/Adh-ir/SAICA_Scribe/issues" target="_blank" style="text-decoration: none; color: #0284c7; display: flex; align-items: center; gap: 6px; transition: color 0.2s;">
+            <a href="https://github.com/Adh-ir/SAICA_Scribe/issues" target="_blank" style="text-decoration: none; color: #0284c7; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.9;"><path fill-rule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" clip-rule="evenodd" /></svg>
                 <span style="font-size: 0.9rem; font-weight: 600;">Report Issue</span>
             </a>
-            <a href="https://github.com/Adh-ir" target="_blank" style="text-decoration: none; color: #0284c7; display: flex; align-items: center; transition: color 0.2s;" title="GitHub">
+            <a href="https://github.com/Adh-ir" target="_blank" style="text-decoration: none; color: #0284c7; display: flex; align-items: center; transition: all 0.2s;" title="GitHub">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.9;"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.48 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd" /></svg>
             </a>
-            <a href="https://linkedin.com/in/adhirs" target="_blank" style="text-decoration: none; color: #0284c7; display: flex; align-items: center; transition: color 0.2s;" title="LinkedIn">
+            <a href="https://linkedin.com/in/adhirs" target="_blank" style="text-decoration: none; color: #0284c7; display: flex; align-items: center; transition: all 0.2s;" title="LinkedIn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.9;"><path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" /></svg>
             </a>
         </div>
