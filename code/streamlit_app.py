@@ -294,6 +294,8 @@ def render_settings_page():
         with col1:
             if st.form_submit_button("Cancel", type="secondary", use_container_width=True):
                 st.session_state.view_mode = "main"
+                try: st.query_params.clear() 
+                except: pass
                 st.rerun()
         with col2:
             if st.form_submit_button("Save Changes", type="primary", use_container_width=True):
@@ -313,6 +315,8 @@ def render_settings_page():
                     pass
                 
                 st.session_state.view_mode = "main"
+                try: st.query_params.clear() 
+                except: pass
                 st.rerun()
 
     st.markdown("</div></div>", unsafe_allow_html=True)
@@ -336,13 +340,9 @@ def show_main_page():
     
     # --- HEADER (Outside Card) ---
     # --- HEADER (Outside Card) ---
-    # Use columns to mimic the flexbox "justify-between" layout
-    # [Logo Area --------------------------------------] [Settings Button]
-    header_col1, header_col2 = st.columns([8, 1.2]) 
-    
-    with header_col1:
-        st.markdown("""
-            <div style="margin-bottom: 2rem;">
+    st.markdown("""
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 2rem;">
+            <div>
                 <div style="display: flex; align-items: baseline; gap: 0.25rem;">
                     <span class="logo-main" style="font-size: 2.75rem;">CA</span>
                     <span class="logo-scribe" style="font-size: 2.75rem; position: relative;">
@@ -352,31 +352,28 @@ def show_main_page():
                 </div>
                 <div style="font-size: 1rem; color: #64748b; font-weight: 500; margin-top: -10px; letter-spacing: 0.025em; padding-left: 0.25rem;">AI-Powered Competency Mapper</div>
             </div>
-        """, unsafe_allow_html=True)
-    
-    with header_col2:
-        # Align button to the bottom to match logo baseline
-        st.markdown("""
-            <style>
-            /* Specific styling for the settings button container to align it */
-            div[data-testid="column"]:nth-of-type(2) {
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                padding-top: 15px;
-            }
-            /* Target the Specific Settings Button by its key/index (last button in header area) */
-            /* We use a specific attribute logic or just override secondary button in this context if possible */
-            /* Since we can't easily isolate just ONE secondary button without a container class, we'll try to match specific structure */
-            </style>
-        """, unsafe_allow_html=True)
-        # Use a "primary" button instead to distinguish it, OR keep secondary and accept it looks like "Target Competency"
-        # Let's keep secondary for consistency but the user wanted the "Glass" look.
-        # The Custom CSS in streamlit_styles.py for [data-testid="stBaseButton-secondary"] sets it to white/blue border.
-        # This matches the user's "Settings" button desire fairly well (white bg, blue border).
-        if st.button("🟢 Settings", key="settings_btn", type="secondary", use_container_width=True):
-             st.session_state.view_mode = "settings"
-             st.rerun()
+            <div>
+                <a href="/?page=settings" target="_self" style="
+                    background: rgba(255, 255, 255, 0.8); 
+                    backdrop-filter: blur(10px);
+                    border: 1px solid #7dd3fc; 
+                    border-radius: 8px; 
+                    padding: 8px 16px; 
+                    color: #0369a1; 
+                    font-weight: 600; 
+                    font-size: 0.8rem; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 6px;
+                    text-decoration: none;
+                ">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #4ade80; border-radius: 50%;"></span>
+                    Settings
+                </a>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
     
     # --- Main Content (The Glass Card) ---
     # --- Main Content (The Glass Card) ---
@@ -837,8 +834,11 @@ if __name__ == "__main__":
 
     if page == "guide":
         show_guide_page()
+    elif page == "settings":
+        render_settings_page()
     elif has_access:
-        if st.session_state.view_mode == "settings":
+        # Also check session state in case we want to support internal state switching too (optional)
+        if st.session_state.get("view_mode") == "settings":
             render_settings_page()
         else:
             show_main_page()
