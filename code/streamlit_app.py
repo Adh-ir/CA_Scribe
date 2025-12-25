@@ -395,7 +395,7 @@ def show_main_page():
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
                     <style>
                         body { margin: 0; padding: 0; background: transparent; }
                         @keyframes dots {
@@ -411,8 +411,8 @@ def show_main_page():
                             height: 350px;
                             background: transparent;
                         }
-                        #sphere-canvas {
-                            width: 80px;
+                        #text-canvas {
+                            width: 280px;
                             height: 80px;
                         }
                         .loading-text {
@@ -436,77 +436,106 @@ def show_main_page():
                 </head>
                 <body>
                     <div class="loading-container">
-                        <canvas id="sphere-canvas" width="160" height="160"></canvas>
+                        <canvas id="text-canvas" width="560" height="160"></canvas>
                         <p class="loading-text">Analyzing with AI<span class="loading-dots"></span></p>
                         <p class="loading-subtext">Mapping competencies from your activity</p>
                     </div>
                     <script>
-                        (function() {
-                            const canvas = document.getElementById('sphere-canvas');
+                        document.fonts.ready.then(() => {
+                            const canvas = document.getElementById('text-canvas');
                             if (!canvas) return;
                             const ctx = canvas.getContext('2d');
                             const w = canvas.width;
                             const h = canvas.height;
-                            const cx = w / 2;
-                            const cy = h / 2;
-                            const radius = 55;
-                            const colors = ['#003B5C', '#005F88', '#0ea5e9', '#7dd3fc'];
                             
+                            const colors = {
+                                ca: '#003B5C',
+                                scribe: '#005F88', 
+                                star: '#0ea5e9'
+                            };
+                            
+                            // Draw text to get pixel positions
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = w;
+                            tempCanvas.height = h;
+                            const tempCtx = tempCanvas.getContext('2d');
+                            
+                            const fontSize = 52;
+                            const baseY = h / 2 + fontSize / 3;
+                            
+                            // Draw CA
+                            tempCtx.font = `800 ${fontSize}px Inter`;
+                            tempCtx.fillStyle = colors.ca;
+                            tempCtx.fillText('CA', 10, baseY);
+                            const caWidth = tempCtx.measureText('CA').width;
+                            
+                            // Draw Scribe
+                            tempCtx.font = `italic 600 ${fontSize}px 'Playfair Display'`;
+                            tempCtx.fillStyle = colors.scribe;
+                            tempCtx.fillText('Scribe', 10 + caWidth + 8, baseY);
+                            const scribeWidth = tempCtx.measureText('Scribe').width;
+                            
+                            // Draw star
+                            const starX = 10 + caWidth + 8 + scribeWidth + 12;
+                            const starY = baseY - fontSize * 0.6;
+                            const starSize = fontSize * 0.35;
+                            tempCtx.fillStyle = colors.star;
+                            tempCtx.beginPath();
+                            const sx = starX, sy = starY;
+                            tempCtx.moveTo(sx, sy - starSize);
+                            tempCtx.lineTo(sx + starSize * 0.35, sy - starSize * 0.35);
+                            tempCtx.lineTo(sx + starSize, sy);
+                            tempCtx.lineTo(sx + starSize * 0.35, sy + starSize * 0.35);
+                            tempCtx.lineTo(sx, sy + starSize);
+                            tempCtx.lineTo(sx - starSize * 0.35, sy + starSize * 0.35);
+                            tempCtx.lineTo(sx - starSize, sy);
+                            tempCtx.lineTo(sx - starSize * 0.35, sy - starSize * 0.35);
+                            tempCtx.closePath();
+                            tempCtx.fill();
+                            
+                            // Sample pixels
+                            const imageData = tempCtx.getImageData(0, 0, w, h).data;
                             const particles = [];
-                            const numParticles = 2000;
-                            const goldenRatio = (1 + Math.sqrt(5)) / 2;
+                            const step = 2;
                             
-                            for (let i = 0; i < numParticles; i++) {
-                                const theta = 2 * Math.PI * i / goldenRatio;
-                                const phi = Math.acos(1 - 2 * (i + 0.5) / numParticles);
-                                const x = Math.cos(theta) * Math.sin(phi);
-                                const y = Math.sin(theta) * Math.sin(phi);
-                                const z = Math.cos(phi);
-                                const color = colors[Math.floor(Math.random() * colors.length)];
-                                const size = 0.5 + Math.random() * 1;
-                                particles.push({ x, y, z, color, size });
+                            for (let y = 0; y < h; y += step) {
+                                for (let x = 0; x < w; x += step) {
+                                    const i = (y * w + x) * 4;
+                                    if (imageData[i + 3] > 128) {
+                                        const r = imageData[i], g = imageData[i + 1], b = imageData[i + 2];
+                                        const color = `rgb(${r},${g},${b})`;
+                                        const size = 0.5 + Math.random() * 1;
+                                        const phase = Math.random() * Math.PI * 2;
+                                        particles.push({ x, y, color, size, phase });
+                                    }
+                                }
                             }
                             
-                            let rotX = 0;
-                            let rotY = 0;
-                            let scale = 1;
-                            let scaleDir = 1;
+                            let time = 0;
                             
                             function animate() {
                                 ctx.clearRect(0, 0, w, h);
+                                time += 0.05;
                                 
-                                rotX += 0.008;
-                                rotY += 0.012;
+                                // Global breathing
+                                const breathe = 1 + Math.sin(time * 0.8) * 0.03;
+                                const cx = w / 2;
+                                const cy = h / 2;
                                 
-                                scale += 0.003 * scaleDir;
-                                if (scale > 1.08) scaleDir = -1;
-                                if (scale < 0.92) scaleDir = 1;
-                                
-                                const cosX = Math.cos(rotX);
-                                const sinX = Math.sin(rotX);
-                                const cosY = Math.cos(rotY);
-                                const sinY = Math.sin(rotY);
-                                
-                                const projected = particles.map(p => {
-                                    let x = p.x, y = p.y, z = p.z;
-                                    let y1 = y * cosX - z * sinX;
-                                    let z1 = y * sinX + z * cosX;
-                                    let x1 = x * cosY + z1 * sinY;
-                                    let z2 = -x * sinY + z1 * cosY;
-                                    return { x: x1, y: y1, z: z2, color: p.color, size: p.size };
-                                }).sort((a, b) => a.z - b.z);
-                                
-                                projected.forEach(p => {
-                                    const depth = (p.z + 1) / 2;
-                                    const px = cx + p.x * radius * scale;
-                                    const py = cy + p.y * radius * scale;
-                                    const alpha = 0.3 + depth * 0.7;
-                                    const sz = p.size * (0.5 + depth * 0.5);
+                                particles.forEach(p => {
+                                    // Local shimmer
+                                    const shimmer = Math.sin(time * 2 + p.phase) * 0.3 + 0.7;
+                                    
+                                    // Position with breathing from center
+                                    const dx = p.x - cx;
+                                    const dy = p.y - cy;
+                                    const px = cx + dx * breathe;
+                                    const py = cy + dy * breathe;
                                     
                                     ctx.beginPath();
-                                    ctx.arc(px, py, sz, 0, Math.PI * 2);
+                                    ctx.arc(px, py, p.size * shimmer, 0, Math.PI * 2);
                                     ctx.fillStyle = p.color;
-                                    ctx.globalAlpha = alpha;
+                                    ctx.globalAlpha = 0.6 + shimmer * 0.4;
                                     ctx.fill();
                                 });
                                 ctx.globalAlpha = 1;
@@ -514,7 +543,7 @@ def show_main_page():
                                 requestAnimationFrame(animate);
                             }
                             animate();
-                        })();
+                        });
                     </script>
                 </body>
                 </html>
