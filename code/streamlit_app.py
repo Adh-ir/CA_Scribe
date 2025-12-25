@@ -147,7 +147,7 @@ def show_setup_page():
                      <span class="logo-main" style="font-size: 4rem;">CA</span>
                      <span class="logo-scribe" style="font-size: 4rem; position: relative;">
                         Scribe 
-                        <span style="position: absolute; top: -5px; right: -30px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(28deg);"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#0ea5e9"/></svg></span>
+                        <span style="position: absolute; top: -5px; right: -30px;"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgdHJhbnNmb3JtPSJyb3RhdGUoMjggMTIgMTIpIj4KPHBhdGggZD0iTTEyIDBMMTQuNTkgOS40MUwyNCAxMkwxNC41OSAxNC41OUwxMiAyNEw5LjQxIDE0LjU5TDAgMTJMOS40MSA5LjQxTDEyIDBaIiBmaWxsPSIjMGVhNWU5Ii8+CjwvZz4KPC9zdmc+" style="width: 28px; height: 28px;" alt="star"></span>
                      </span>
                 </div>
                 <div style="font-family: 'Inter', sans-serif; font-weight: 600; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.85rem; margin-top: -0.25rem;">
@@ -281,7 +281,7 @@ def render_settings_page():
                      <span class="logo-main" style="font-size: 2.4rem;">CA</span>
                      <span class="logo-scribe" style="font-size: 2.4rem; position: relative;">
                         Scribe 
-                        <span style="position: absolute; top: -5px; right: -26px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(28deg);"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#0ea5e9"/></svg></span>
+                        <span style="position: absolute; top: -5px; right: -26px;"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgdHJhbnNmb3JtPSJyb3RhdGUoMjggMTIgMTIpIj4KPHBhdGggZD0iTTEyIDBMMTQuNTkgOS40MUwyNCAxMkwxNC41OSAxNC41OUwxMiAyNEw5LjQxIDE0LjU5TDAgMTJMOS40MSA5LjQxTDEyIDBaIiBmaWxsPSIjMGVhNWU5Ii8+CjwvZz4KPC9zdmc+" style="width: 24px; height: 24px;" alt="star"></span>
                      </span>
                 </div>
                 <h2 style="font-family: 'Inter', sans-serif; color: #1e293b; font-size: 1.25rem;">API Configuration</h2>
@@ -404,9 +404,7 @@ def show_main_page():
                     <span class="logo-scribe" style="font-size: 2.75rem; position: relative;">
                         Scribe 
                         <span style="position: absolute; top: -5px; right: -28px;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(28deg); width: 22px; height: 22px;">
-                                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#0ea5e9"/>
-                            </svg>
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgdHJhbnNmb3JtPSJyb3RhdGUoMjggMTIgMTIpIj4KPHBhdGggZD0iTTEyIDBMMTQuNTkgOS40MUwyNCAxMkwxNC41OSAxNC41OUwxMiAyNEw5LjQxIDE0LjU5TDAgMTJMOS40MSA5LjQxTDEyIDBaIiBmaWxsPSIjMGVhNWU5Ii8+CjwvZz4KPC9zdmc+" style="width: 22px; height: 22px;" alt="star">
                         </span>
                     </span>
                 </div>
