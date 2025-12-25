@@ -636,7 +636,7 @@ def show_setup_page():
                         <span style="font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">🐙 GitHub Models</span>
                         <span style="font-size: 0.65rem; font-weight: 700; color: #64748b; background: rgba(100, 116, 139, 0.1); padding: 3px 8px; border-radius: 99px; border: 1px solid rgba(100, 116, 139, 0.25);">OPENAI GPT-4o</span>
                     </div>
-                    <a href="https://github.com/marketplace/models" target="_blank" style="font-size: 0.75rem; color: #0ea5e9; text-decoration: none; font-weight: 600; transition: color 0.2s;">Get Token ↗</a>
+                    <a href="https://github.com/settings/tokens" target="_blank" style="font-size: 0.75rem; color: #0ea5e9; text-decoration: none; font-weight: 600; transition: color 0.2s;">Get Token ↗</a>
                 </div>
             """, unsafe_allow_html=True)
             gh_key = st.text_input("GitHub Token", type="password", placeholder="Personal Access Token (ghp_...)", label_visibility="collapsed")
