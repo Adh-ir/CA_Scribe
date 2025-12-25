@@ -504,6 +504,7 @@ def show_main_page():
             # Wrapper for the animation to allow mode switching
             # Wrapper for the animation to allow mode switching
             # Wrapper for the animation to allow mode switching
+            # Wrapper for the animation to allow mode switching
             def get_loading_html(mode="ENTRY"):
                 # mode: "ENTRY" (Assemble + Breathe loop) or "EXIT" (Instant Explode)
                 
@@ -568,7 +569,6 @@ def show_main_page():
                             if (!canvas) return;
                             
                             const ctx = canvas.getContext('2d');
-                            // Optimize canvas scaling for Retina/HighDPI
                             const dpr = window.devicePixelRatio || 1;
                             
                             canvas.width = 800 * dpr;
@@ -587,6 +587,34 @@ def show_main_page():
                                 star: '#0ea5e9' 
                             }};
 
+                            // EXACT PATH from user: M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z
+                            // Native size 24x24
+                            function drawTargetStar(ctx, x, y, size) {{
+                                ctx.save();
+                                // Align center
+                                ctx.translate(x, y);
+                                // Scale from 24px to target size
+                                const scale = size / 24;
+                                ctx.scale(scale, scale);
+                                // Center offset (path is 0,0 to 24,24, center is 12,12)
+                                ctx.translate(-12, -12);
+                                
+                                ctx.beginPath();
+                                ctx.moveTo(12, 0);
+                                ctx.lineTo(14.59, 9.41);
+                                ctx.lineTo(24, 12);
+                                ctx.lineTo(14.59, 14.59);
+                                ctx.lineTo(12, 24);
+                                ctx.lineTo(9.41, 14.59);
+                                ctx.lineTo(0, 12);
+                                ctx.lineTo(9.41, 9.41);
+                                ctx.lineTo(12, 0);
+                                ctx.closePath();
+                                ctx.fillStyle = colors.star;
+                                ctx.fill();
+                                ctx.restore();
+                            }}
+
                             function createParticleGroups() {{
                                 const tempCanvas = document.createElement('canvas');
                                 tempCanvas.width = w;
@@ -602,35 +630,32 @@ def show_main_page():
                                 const scribeWidth = tempCtx.measureText('Scribe').width;
                                 
                                 const spacing = 12;
-                                // Font-based sizing for the star to match header
-                                const starFontSize = fontSize * 0.55; 
-                                tempCtx.font = `${{starFontSize}}px "Inter", sans-serif`;
-                                const starWidth = tempCtx.measureText('✦').width;
+                                // Visual matching size
+                                const starSize = 40; 
                                 
-                                const totalWidth = caWidth + spacing + scribeWidth + spacing + starWidth;
+                                const totalWidth = caWidth + spacing + scribeWidth + spacing + starSize;
                                 const startX = (w - totalWidth) / 2;
                                 
-                                // 1. Draw CA (Group 1)
+                                // 1. Draw CA
                                 tempCtx.clearRect(0,0,w,h);
                                 tempCtx.font = `800 ${{fontSize}}px "Inter", sans-serif`;
                                 tempCtx.fillStyle = '#FFFFFF'; 
                                 tempCtx.fillText('CA', startX, baseY);
                                 const caData = tempCtx.getImageData(0,0,w,h).data;
                                 
-                                // 2. Draw Scribe (Group 2)
+                                // 2. Draw Scribe
                                 tempCtx.clearRect(0,0,w,h);
                                 tempCtx.font = `italic 600 ${{fontSize}}px "Playfair Display", serif`;
                                 tempCtx.fillStyle = '#FFFFFF';
                                 tempCtx.fillText('Scribe', startX + caWidth + spacing, baseY);
                                 const scribeData = tempCtx.getImageData(0,0,w,h).data;
                                 
-                                // 3. Draw Star (Group 3) - USING CHARACTER
+                                // 3. Draw Star (USING PATH)
                                 tempCtx.clearRect(0,0,w,h);
-                                const starX = startX + caWidth + spacing + scribeWidth + spacing;
-                                const starY = baseY - (fontSize * 0.4); 
-                                tempCtx.font = `${{starFontSize}}px "Inter", sans-serif`;
+                                const starCenterX = startX + caWidth + spacing + scribeWidth + spacing + (starSize/2);
+                                const starCenterY = baseY - (fontSize / 4); 
                                 tempCtx.fillStyle = '#FFFFFF';
-                                tempCtx.fillText('✦', starX, starY);
+                                drawTargetStar(tempCtx, starCenterX, starCenterY, starSize);
                                 const starData = tempCtx.getImageData(0,0,w,h).data;
                                 
                                 // Generate Particles
@@ -638,14 +663,14 @@ def show_main_page():
                                 const groupScribe = [];
                                 const groupStar = [];
                                 
-                                // Optimization: Batch rendering makes step=2 (high density) performant.
+                                // High density (step 2) for quality
                                 const step = 2; 
                                 
                                 for (let y = 0; y < h; y += step) {{
                                     for (let x = 0; x < w; x += step) {{
                                         const i = (y * w + x) * 4;
                                         
-                                        // Simple threshold
+                                        // Specificity check
                                         if (starData[i+3] > 128) {{
                                              groupStar.push({{
                                                 ox: x, oy: y,
@@ -723,7 +748,7 @@ def show_main_page():
                                             p.vy *= 1.05;
                                         }}
                                         
-                                        // Draw
+                                        // Render
                                         ctx.rect(p.x, p.y, p.size, p.size);
                                     }}
                                     ctx.fill();
@@ -733,7 +758,6 @@ def show_main_page():
                                     ctx.clearRect(0, 0, w, h);
                                     time += 0.02;
                                     
-                                    // Logic Control
                                     if (MODE === "ENTRY") {{
                                         if (time < 2.5) phase = "ASSEMBLE";
                                         else phase = "BREATHE";
