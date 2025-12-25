@@ -725,7 +725,9 @@ header, [data-testid="stHeader"] {
 [data-testid="stHorizontalBlock"]:active,
 [data-testid="stHorizontalBlock"]:focus-visible,
 [data-testid="stHorizontalBlock"]:target {
-    background-color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 20px !important;
     padding: 30px !important;
     border: 4px solid #93c5fd !important;
