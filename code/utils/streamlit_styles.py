@@ -420,8 +420,9 @@ html, body, [class*="css"] {
 }
 
 /* Report Title Styling - Matches Activity Description Label */
-[data-testid="stHorizontalBlock"] [data-testid="stColumn"]:nth-of-type(2) h1,
-[data-testid="stHorizontalBlock"] [data-testid="stColumn"]:last-child h1 {
+div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(2) h1,
+div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:last-child h1,
+[data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-of-type(2) h1 {
     color: #1e3a8a !important;
     font-family: 'Inter', sans-serif !important;
     font-weight: 800 !important;
