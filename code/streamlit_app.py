@@ -335,9 +335,11 @@ def show_main_page():
                 st.error("Failed to load competency framework. Please check logs.")
     
     # --- HEADER (Outside Card) ---
-    st.markdown("""
-        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 2rem;">
-            <div>
+    # --- HEADER (Outside Card) ---
+    header_col1, header_col2 = st.columns([5, 1])
+    with header_col1:
+        st.markdown("""
+            <div style="margin-bottom: 2rem;">
                 <div style="display: flex; align-items: baseline; gap: 0.25rem;">
                     <span class="logo-main" style="font-size: 2.75rem;">CA</span>
                     <span class="logo-scribe" style="font-size: 2.75rem; position: relative;">
@@ -347,27 +349,13 @@ def show_main_page():
                 </div>
                 <div style="font-size: 1rem; color: #64748b; font-weight: 500; margin-top: -10px; letter-spacing: 0.025em; padding-left: 0.25rem;">AI-Powered Competency Mapper</div>
             </div>
-            <div>
-                <button style="
-                    background: rgba(255, 255, 255, 0.8); 
-                    backdrop-filter: blur(10px);
-                    border: 1px solid #7dd3fc; 
-                    border-radius: 8px; 
-                    padding: 8px 16px; 
-                    color: #0369a1; 
-                    font-weight: 600; 
-                    font-size: 0.8rem; 
-                    cursor: pointer; 
-                    display: flex; 
-                    align-items: center; 
-                    gap: 6px;
-                ">
-                    <span style="display: inline-block; width: 8px; height: 8px; background: #4ade80; border-radius: 50%;"></span>
-                    Settings
-                </button>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+    
+    with header_col2:
+        st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
+        if st.button("⚙️ Settings", type="secondary", use_container_width=True):
+             st.session_state.view_mode = "settings"
+             st.rerun()
     
     # --- Main Content (The Glass Card) ---
     # --- Main Content (The Glass Card) ---
@@ -820,6 +808,10 @@ def show_guide_page():
 
 # --- 6. APP CONTROLLER ---
 if __name__ == "__main__":
+    # Initialize view_mode
+    if "view_mode" not in st.session_state:
+        st.session_state.view_mode = "main"
+
     # Check query params for routing
     try:
         # Streamlit 1.30+
@@ -832,6 +824,9 @@ if __name__ == "__main__":
     if page == "guide":
         show_guide_page()
     elif has_access:
-        show_main_page()
+        if st.session_state.view_mode == "settings":
+            render_settings_page()
+        else:
+            show_main_page()
     else:
         show_setup_page()
