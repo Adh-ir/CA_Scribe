@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import requests
-# Deploy Trigger: V3.1 - Force Trigger
+# Deploy Trigger: V3.2 - Force Trigger
 import streamlit.components.v1 as components
 from PIL import Image
 
