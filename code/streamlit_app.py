@@ -331,6 +331,7 @@ def show_main_page():
             </style>
         """, unsafe_allow_html=True)
         
+        # Button to pre-fill competency template
         if st.button("✨ Target Competency                                                              +", use_container_width=True, type="secondary"):
             st.session_state.activity_input = "COMPETENCY: [Insert Name] EVIDENCE: "
         
