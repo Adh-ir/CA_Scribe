@@ -437,10 +437,11 @@ div[class*="stHorizontalBlock"]:focus-within {
 
 /* Text Area & Inputs */
 .stTextArea textarea, .stSelectbox div[data-baseweb="select"], .stTextInput input {
-    border: 1px solid #cbd5e1;
-    background-color: #ffffff !important; /* Solid White Items */
-    border-radius: 1rem;
+    border: 1px solid #e0f2fe !important; /* Softer border to match button */
+    background-color: #ffffff !important;
+    border-radius: 0.75rem !important; /* Match button radius */
     color: #1e293b;
+    transition: all 0.2s ease-in-out;
 }
 
 /* Remove default Streamlit outer border to prevent double-border */
@@ -450,8 +451,9 @@ div[class*="stHorizontalBlock"]:focus-within {
 }
 
 .stTextArea textarea:focus, .stSelectbox div[data-baseweb="select"]:focus-within {
-    border-color: #cbd5e1;
-    /* Removed blue glow: box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2); */
+    border-color: #38bdf8 !important; /* Sky Blue */
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4) !important; /* Soft Blue Glow */
+    outline: none !important;
 }
 
 
@@ -641,6 +643,8 @@ header, [data-testid="stHeader"] {
     outline: none !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02),
                 0 20px 40px -12px rgba(14, 165, 233, 0.1) !important;
+    transition: none !important;
+    animation: none !important;
 }
 </style>
 """
@@ -662,25 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, true);
     
-    // Specifically prevent textarea visual feedback after value changes
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            mutation.addedNodes.forEach(function(node) {
-                if (node.tagName === 'TEXTAREA' || (node.querySelector && node.querySelector('textarea'))) {
-                    const textareas = node.tagName === 'TEXTAREA' ? [node] : node.querySelectorAll('textarea');
-                    textareas.forEach(function(textarea) {
-                        textarea.addEventListener('focus', function(e) {
-                            // Prevent default focus visual feedback
-                            e.target.style.boxShadow = 'none';
-                            e.target.style.borderColor = '#cbd5e1';
-                        });
-                    });
-                }
-            });
-        });
-    });
-    
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Removed textarea focus suppression to allow the new glow effect
 });
 </script>
 """
