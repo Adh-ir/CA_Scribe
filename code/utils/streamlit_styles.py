@@ -504,7 +504,7 @@ button[data-testid="stBaseButton-secondary"],
     border: 1px solid #e0f2fe !important;
     background: #ffffff !important;
     background-color: #ffffff !important;
-    color: #0369a1 !important;
+    color: #64748b !important; /* Dimmer text color */
     font-weight: 600 !important;
     font-size: 0.95rem !important;
     font-family: 'Inter', sans-serif !important;
