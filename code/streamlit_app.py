@@ -240,8 +240,87 @@ def show_setup_page():
 
 
 
+# --- 3.5. UI: SETTINGS PAGE ---
+def render_settings_page():
+    st.markdown(FONT_LINKS, unsafe_allow_html=True)
+    st.markdown(MAIN_CSS, unsafe_allow_html=True)
+    st.markdown('<div class="fluid-bg"><div class="fluid-shape shape-1"></div><div class="fluid-shape shape-2"></div><div class="fluid-shape shape-3"></div></div>', unsafe_allow_html=True)
+
+    # Re-use setup_page styles but wrapped in a card approach
+    st.markdown("""
+        <div style="display: flex; justify-content: center; margin-top: 5vh; margin-bottom: 2rem;">
+            <div style="
+                background: rgba(255, 255, 255, 0.75); 
+                backdrop-filter: blur(20px); 
+                padding: 3rem; 
+                border-radius: 24px; 
+                box-shadow: 0 20px 40px -10px rgba(14, 165, 233, 0.15); 
+                border: 1px solid rgba(255, 255, 255, 0.5); 
+                max-width: 500px; 
+                width: 100%;
+            ">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: center; align-items: baseline; gap: 0.25rem; margin-bottom: 0.5rem;">
+                         <span class="logo-main" style="font-size: 2rem;">CA</span>
+                         <span class="logo-scribe" style="font-size: 2rem; position: relative;">
+                            Scribe 
+                            <span style="position: absolute; top: -6px; right: -20px; font-size: 1.25rem; color: #0ea5e9;">✦</span>
+                         </span>
+                    </div>
+                    <h2 style="font-family: 'Inter', sans-serif; color: #1e293b; font-size: 1.25rem;">API Configuration</h2>
+                    <p style="color: #64748b; font-size: 0.9rem;">Update your API keys below</p>
+                </div>
+    """, unsafe_allow_html=True)
+
+    with st.form("settings_form"):
+        # Gemini
+        st.markdown("**Google Gemini**", unsafe_allow_html=True)
+        g_key_val = st.session_state.get("GOOGLE_API_KEY", "")
+        g_key = st.text_input("Gemini Key", value=g_key_val, type="password", placeholder="AIza...", label_visibility="collapsed")
+
+        # Groq
+        st.markdown("**Groq**", unsafe_allow_html=True)
+        q_key_val = st.session_state.get("GROQ_API_KEY", "")
+        q_key = st.text_input("Groq Key", value=q_key_val, type="password", placeholder="gsk_...", label_visibility="collapsed")
+
+        # GitHub
+        st.markdown("**GitHub Models**", unsafe_allow_html=True)
+        gh_key_val = st.session_state.get("GITHUB_TOKEN", "")
+        gh_key = st.text_input("GitHub Token", value=gh_key_val, type="password", placeholder="ghp_...", label_visibility="collapsed")
+        
+        st.markdown("<div style='height: 20px'></div>", unsafe_allow_html=True)
+        
+        col1, col2 = st.columns([1, 1], gap="small")
+        with col1:
+            if st.form_submit_button("Cancel", type="secondary", use_container_width=True):
+                st.session_state.view_mode = "main"
+                st.rerun()
+        with col2:
+            if st.form_submit_button("Save Changes", type="primary", use_container_width=True):
+                if g_key: st.session_state["GOOGLE_API_KEY"] = g_key
+                if q_key: st.session_state["GROQ_API_KEY"] = q_key
+                if gh_key: st.session_state["GITHUB_TOKEN"] = gh_key
+                
+                # Persist to secrets
+                try:
+                    secrets_path = os.path.join(os.getcwd(), ".streamlit", "secrets.toml")
+                    os.makedirs(os.path.dirname(secrets_path), exist_ok=True)
+                    with open(secrets_path, "w") as f:
+                        if g_key: f.write(f'GOOGLE_API_KEY = "{g_key}"\n')
+                        if q_key: f.write(f'GROQ_API_KEY = "{q_key}"\n')
+                        if gh_key: f.write(f'GITHUB_TOKEN = "{gh_key}"\n')
+                except Exception:
+                    pass
+                
+                st.session_state.view_mode = "main"
+                st.rerun()
+
+    st.markdown("</div></div>", unsafe_allow_html=True)
+
+
 # --- 4. UI: MAIN PAGE ---
 def show_main_page():
+
     # Inject Styles & Background
     st.markdown(FONT_LINKS, unsafe_allow_html=True)
     st.markdown(MAIN_CSS, unsafe_allow_html=True)
@@ -393,6 +472,7 @@ def show_main_page():
             
             # Wrapper for the animation to allow mode switching
             # Wrapper for the animation to allow mode switching
+            # Wrapper for the animation to allow mode switching
             def get_loading_html(mode="ENTRY"):
                 # mode: "ENTRY" (Assemble + Breathe loop) or "EXIT" (Instant Explode)
                 
@@ -457,14 +537,27 @@ def show_main_page():
                             if (!canvas) return;
                             
                             const ctx = canvas.getContext('2d');
-                            canvas.width = 800;
-                            canvas.height = 200;
-                            const w = canvas.width;
-                            const h = canvas.height;
+                            // Optimize canvas scaling for Retina/HighDPI
+                            const dpr = window.devicePixelRatio || 1;
+                            const rect = canvas.getBoundingClientRect();
                             
-                            const colors = {{ ca: '#003B5C', scribe: '#005F88', star: '#0ea5e9' }};
+                            canvas.width = 800 * dpr;
+                            canvas.height = 200 * dpr;
+                            ctx.scale(dpr, dpr);
+                            
+                            // Visual size remains fixed
+                            canvas.style.width = '800px';
+                            canvas.style.height = '200px';
+                            
+                            const w = 800; // Logical width
+                            const h = 200; // Logical height
+                            
+                            const colors = {{ 
+                                ca: '#003B5C', 
+                                scribe: '#005F88', 
+                                star: '#0ea5e9' 
+                            }};
 
-                            // Draw Star Shape Manually
                             function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {{
                                 let rot = Math.PI / 2 * 3;
                                 let x = cx;
@@ -490,8 +583,7 @@ def show_main_page():
                                 ctx.fill();
                             }}
                             
-                            // 1. Create particles
-                            function createParticles() {{
+                            function createParticleGroups() {{
                                 const tempCanvas = document.createElement('canvas');
                                 tempCanvas.width = w;
                                 tempCanvas.height = h;
@@ -506,45 +598,58 @@ def show_main_page():
                                 const scribeWidth = tempCtx.measureText('Scribe').width;
                                 
                                 const spacing = 12;
-                                // Star sizing
                                 const starRadius = fontSize * 0.25; 
                                 const starWidth = starRadius * 2;
-                                
                                 const totalWidth = caWidth + spacing + scribeWidth + spacing + starWidth;
                                 const startX = (w - totalWidth) / 2;
                                 
-                                // Draw Text
+                                // 1. Draw CA (Group 1)
+                                tempCtx.clearRect(0,0,w,h);
                                 tempCtx.font = `800 ${{fontSize}}px "Inter", sans-serif`;
-                                tempCtx.fillStyle = colors.ca;
+                                tempCtx.fillStyle = '#FFFFFF'; # Mask color
                                 tempCtx.fillText('CA', startX, baseY);
+                                const caData = tempCtx.getImageData(0,0,w,h).data;
                                 
+                                // 2. Draw Scribe (Group 2)
+                                tempCtx.clearRect(0,0,w,h);
                                 tempCtx.font = `italic 600 ${{fontSize}}px "Playfair Display", serif`;
-                                tempCtx.fillStyle = colors.scribe;
+                                tempCtx.fillStyle = '#FFFFFF';
                                 tempCtx.fillText('Scribe', startX + caWidth + spacing, baseY);
+                                const scribeData = tempCtx.getImageData(0,0,w,h).data;
                                 
-                                // Draw Star
+                                // 3. Draw Star (Group 3)
+                                tempCtx.clearRect(0,0,w,h);
                                 const starX = startX + caWidth + spacing + scribeWidth + spacing + starRadius;
                                 const starY = baseY - (fontSize * 0.25);
+                                tempCtx.fillStyle = '#FFFFFF';
                                 drawStar(tempCtx, starX, starY, 4, starRadius, starRadius * 0.4);
+                                const starData = tempCtx.getImageData(0,0,w,h).data;
                                 
-                                // Sample
-                                const imageData = tempCtx.getImageData(0, 0, w, h).data;
-                                const particles = [];
-                                const step = 4; // Aggressive optimization (was 3)
+                                // Generate Particles
+                                const groupCA = [];
+                                const groupScribe = [];
+                                const groupStar = [];
+                                
+                                // Density: Step 2 ensures high quality (looks "full")
+                                // Optimization: Batch rendering makes step=2 instant.
+                                const step = 3; 
                                 
                                 for (let y = 0; y < h; y += step) {{
                                     for (let x = 0; x < w; x += step) {{
                                         const i = (y * w + x) * 4;
-                                        // Brightness check + Culling
-                                        if (imageData[i + 3] > 128 && Math.random() > 0.15) {{
-                                            const r = imageData[i], g = imageData[i + 1], b = imageData[i + 2];
-                                            particles.push({{
+                                        
+                                        let targetGroup = null;
+                                        // Specificity check
+                                        if (starData[i+3] > 128) targetGroup = groupStar;
+                                        else if (scribeData[i+3] > 128) targetGroup = groupScribe;
+                                        else if (caData[i+3] > 128) targetGroup = groupCA;
+                                        
+                                        if (targetGroup) {{
+                                            targetGroup.push({{
                                                 ox: x, oy: y,
-                                                // MODE CHECK
                                                 x: (MODE === "EXIT") ? x : Math.random() * w,
                                                 y: (MODE === "EXIT") ? y : Math.random() * h,
-                                                color: `rgb(${{r}},${{g}},${{b}})`,
-                                                size: 1.1, 
+                                                size: 1.5, // Slightly larger for robust look
                                                 phase: Math.random() * Math.PI * 2,
                                                 vx: (Math.random() - 0.5) * 4,
                                                 vy: (Math.random() - 0.5) * 4    
@@ -552,40 +657,32 @@ def show_main_page():
                                         }}
                                     }}
                                 }}
-                                return particles;
+                                return {{ groupCA, groupScribe, groupStar }};
                             }}
                             
-                            // Initialize
+                            // Animation Loop
                             document.fonts.ready.then(() => {{
-                                let particles = createParticles();
+                                const groups = createParticleGroups();
                                 
-                                // Animation State
                                 let time = 0;
                                 const cx = w / 2;
                                 const cy = h / 2;
                                 let phase = "ASSEMBLE"; 
                                 if (MODE === "EXIT") phase = "BREATHE"; 
                                 
-                                function animate() {{
-                                    ctx.clearRect(0, 0, w, h);
-                                    time += 0.02;
-                                    
-                                    // Logic Control
-                                    if (MODE === "ENTRY") {{
-                                        if (time < 2.5) phase = "ASSEMBLE";
-                                        else phase = "BREATHE";
-                                    }}
-                                    else if (MODE === "EXIT") {{
-                                        if (time < 0.5) phase = "BREATHE";
-                                        else phase = "EXPLODE";
-                                    }}
+                                function updateAndDrawGroup(particles, colorStr) {{
+                                    ctx.fillStyle = colorStr;
+                                    ctx.beginPath();
                                     
                                     const breatheScale = 1 + Math.sin(time * 2) * 0.02;
-
-                                    particles.forEach(p => {{
+                                    
+                                    for (let i = 0; i < particles.length; i++) {{
+                                        const p = particles[i];
+                                        
+                                        // Update Logic
                                         if (phase === "ASSEMBLE") {{
-                                            p.x += (p.ox - p.x) * 0.05;
-                                            p.y += (p.oy - p.y) * 0.05;
+                                            p.x += (p.ox - p.x) * 0.08;
+                                            p.y += (p.oy - p.y) * 0.08;
                                         }} else if (phase === "BREATHE") {{
                                             const dx = p.ox - cx;
                                             const dy = p.oy - cy;
@@ -602,11 +699,31 @@ def show_main_page():
                                             p.vy *= 1.05;
                                         }}
                                         
-                                        ctx.fillStyle = p.color;
-                                        ctx.beginPath();
-                                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                                        ctx.fill();
-                                    }});
+                                        // Draw (Batching rectangular pixels is fastest)
+                                        ctx.rect(p.x, p.y, p.size, p.size);
+                                    }}
+                                    ctx.fill();
+                                }}
+
+                                function animate() {{
+                                    ctx.clearRect(0, 0, w, h);
+                                    time += 0.02;
+                                    
+                                    // Logic Control
+                                    if (MODE === "ENTRY") {{
+                                        if (time < 2.5) phase = "ASSEMBLE";
+                                        else phase = "BREATHE";
+                                    }}
+                                    else if (MODE === "EXIT") {{
+                                        if (time < 0.5) phase = "BREATHE";
+                                        else phase = "EXPLODE";
+                                    }}
+                                    
+                                    // Batch Render distinct colors
+                                    updateAndDrawGroup(groups.groupCA, colors.ca);
+                                    updateAndDrawGroup(groups.groupScribe, colors.scribe);
+                                    updateAndDrawGroup(groups.groupStar, colors.star);
+
                                     requestAnimationFrame(animate);
                                 }}
                                 animate();
