@@ -443,9 +443,9 @@ def show_main_page():
                         <p class="loading-subtext">Mapping competencies from your activity</p>
                     </div>
                     <script>
-                        document.fonts.ready.then(() => {
-                            const canvas = document.getElementById('text-canvas');
-                            if (!canvas) return;
+                        // Execute immediately to prevent blocking
+                        const canvas = document.getElementById('text-canvas');
+                        if (canvas) {
                             const ctx = canvas.getContext('2d');
                             const w = canvas.width;
                             const h = canvas.height;
@@ -576,7 +576,7 @@ def show_main_page():
                                 requestAnimationFrame(animate);
                             }
                             animate();
-                        });
+                        } # End if canvas
                     </script>
                 </body>
                 </html>
