@@ -460,7 +460,7 @@ def show_main_page():
                             tempCanvas.height = h;
                             const tempCtx = tempCanvas.getContext('2d');
                             
-                            const fontSize = 56;
+                            const fontSize = 70;
                             const baseY = h / 2 + fontSize / 3;
                             
                             // Measure total width first for centering
