@@ -392,21 +392,211 @@ def show_main_page():
             # Show modern loading animation in placeholder area
             loading_placeholder = st.empty()
             
-            # Debugging: Simple static HTML to test rendering
+            # Robust modern loading animation
             loading_html = """
                 <!DOCTYPE html>
                 <html>
-                <body style="margin:0; padding:0; background: #ffebee; display: flex; align-items: center; justify-content: center; height: 350px;">
-                    <h1 style="color: #c62828; font-family: sans-serif; font-size: 24px;">LOADING ANIMATION TEST</h1>
+                <head>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+                    <style>
+                        body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+                        .loading-container {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            height: 350px;
+                            background: transparent;
+                            position: relative;
+                        }
+                        #text-canvas {
+                            width: 800px;
+                            height: 200px;
+                            z-index: 2;
+                        }
+                        .loading-text {
+                            margin-top: 10px;
+                            font-weight: 600;
+                            font-size: 1rem;
+                            color: #0369a1;
+                            font-family: 'Inter', sans-serif;
+                            z-index: 2;
+                        }
+                        .loading-subtext {
+                            margin-top: 4px;
+                            font-size: 0.85rem;
+                            color: #94a3b8;
+                            font-family: 'Inter', sans-serif;
+                            z-index: 2;
+                        }
+                        #error-display {
+                            position: absolute;
+                            top: 10px;
+                            left: 10px;
+                            color: red;
+                            font-family: monospace;
+                            font-size: 12px;
+                            z-index: 100;
+                            pointer-events: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div id="error-display"></div>
+                    <div class="loading-container">
+                        <canvas id="text-canvas" width="800" height="200"></canvas>
+                        <p class="loading-text">Analyzing with AI...</p>
+                        <p class="loading-subtext">Mapping competencies</p>
+                    </div>
+                    <script>
+                        // Global error handler to catch crashes
+                        window.onerror = function(msg, url, lineNo, columnNo, error) {
+                            const errorDiv = document.getElementById('error-display');
+                            if (errorDiv) errorDiv.innerHTML = `Error: ${msg} at line ${lineNo}`;
+                            return false;
+                        };
+
+                        // Main Logic
+                        (function() {
+                            const canvas = document.getElementById('text-canvas');
+                            if (!canvas) return;
+                            
+                            const ctx = canvas.getContext('2d');
+                            // Ensure 1:1 pixel mapping
+                            canvas.width = 800;
+                            canvas.height = 200;
+                            
+                            const w = canvas.width;
+                            const h = canvas.height;
+                            
+                            const colors = {
+                                ca: '#003B5C',
+                                scribe: '#005F88', 
+                                star: '#0ea5e9'
+                            };
+                            
+                            // 1. Create particles from text
+                            function createParticles() {
+                                const tempCanvas = document.createElement('canvas');
+                                tempCanvas.width = w;
+                                tempCanvas.height = h;
+                                const tempCtx = tempCanvas.getContext('2d');
+                                
+                                const fontSize = 100;
+                                const baseY = h / 2 + fontSize / 3;
+                                
+                                // Layout
+                                tempCtx.font = `800 ${fontSize}px "Inter", sans-serif`;
+                                const caWidth = tempCtx.measureText('CA').width;
+                                
+                                // Fallback font stack in case Playfair doesn't load instantly
+                                tempCtx.font = `italic 600 ${fontSize}px "Playfair Display", serif`;
+                                const scribeWidth = tempCtx.measureText('Scribe').width;
+                                
+                                const starSize = fontSize * 0.35;
+                                const spacing = 10;
+                                const totalWidth = caWidth + spacing + scribeWidth + spacing + starSize * 2;
+                                const startX = (w - totalWidth) / 2;
+                                
+                                // Draw Text to Temp Canvas
+                                tempCtx.font = `800 ${fontSize}px "Inter", sans-serif`;
+                                tempCtx.fillStyle = colors.ca;
+                                tempCtx.fillText('CA', startX, baseY);
+                                
+                                tempCtx.font = `italic 600 ${fontSize}px "Playfair Display", serif`;
+                                tempCtx.fillStyle = colors.scribe;
+                                tempCtx.fillText('Scribe', startX + caWidth + spacing, baseY);
+                                
+                                // Draw Star
+                                const starX = startX + caWidth + spacing + scribeWidth + spacing + starSize;
+                                const starY = baseY - fontSize * 0.6;
+                                tempCtx.fillStyle = colors.star;
+                                tempCtx.beginPath();
+                                drawStar(tempCtx, starX, starY, 5, starSize, starSize/2);
+                                tempCtx.fill();
+                                
+                                // Sample Pixels
+                                const imageData = tempCtx.getImageData(0, 0, w, h).data;
+                                const particles = [];
+                                const step = 3; // Coarser step for performance
+                                
+                                for (let y = 0; y < h; y += step) {
+                                    for (let x = 0; x < w; x += step) {
+                                        const i = (y * w + x) * 4;
+                                        if (imageData[i + 3] > 128) {
+                                            const r = imageData[i], g = imageData[i + 1], b = imageData[i + 2];
+                                            particles.push({
+                                                ox: x, oy: y,
+                                                x: x, y: y,
+                                                color: `rgb(${r},${g},${b})`,
+                                                size: Math.random() < 0.5 ? 1 : 1.5,
+                                                // Drift properties
+                                                vx: (Math.random() - 0.5) * 0.5,
+                                                vy: (Math.random() - 0.5) * 0.5,
+                                                phase: Math.random() * Math.PI * 2
+                                            });
+                                        }
+                                    }
+                                }
+                                return particles;
+                            }
+
+                            function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+                                let rot = Math.PI / 2 * 3;
+                                let x = cx;
+                                let y = cy;
+                                let step = Math.PI / spikes;
+            
+                                ctx.moveTo(cx, cy - outerRadius);
+                                for (let i = 0; i < spikes; i++) {
+                                    x = cx + Math.cos(rot) * outerRadius;
+                                    y = cy + Math.sin(rot) * outerRadius;
+                                    ctx.lineTo(x, y);
+                                    rot += step;
+            
+                                    x = cx + Math.cos(rot) * innerRadius;
+                                    y = cy + Math.sin(rot) * innerRadius;
+                                    ctx.lineTo(x, y);
+                                    rot += step;
+                                }
+                                ctx.lineTo(cx, cy - outerRadius);
+                                ctx.closePath();
+                            }
+                            
+                            // Initialize
+                            let particles = createParticles();
+                            
+                            // Animation Loop
+                            let time = 0;
+                            function animate() {
+                                ctx.clearRect(0, 0, w, h);
+                                time += 0.02;
+                                
+                                particles.forEach(p => {
+                                    // Slight organic movement
+                                    const driftX = Math.sin(time + p.phase) * 1.5;
+                                    const driftY = Math.cos(time + p.phase * 0.5) * 1.5;
+                                    
+                                    ctx.fillStyle = p.color;
+                                    ctx.beginPath();
+                                    ctx.arc(p.ox + driftX, p.oy + driftY, p.size, 0, Math.PI * 2);
+                                    ctx.fill();
+                                });
+                                
+                                requestAnimationFrame(animate);
+                            }
+                            animate();
+                            
+                        })();
+                    </script>
                 </body>
                 </html>
             """
             with loading_placeholder.container():
                 components.html(loading_html, height=370)
             
-            # Allow UI to render component (long delay for verification)
-            time.sleep(1.0) # Yield to UI
-            
+            # Run analysis
+            time.sleep(0.5) # Yield to UI
             try:
                 current_activity = st.session_state.get("activity_input", "")
                 current_provider = st.session_state.get("selected_provider", "gemini")
