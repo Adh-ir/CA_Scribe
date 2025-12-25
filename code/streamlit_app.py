@@ -388,8 +388,6 @@ def show_main_page():
         
         # Check if analysis was triggered
         if st.session_state.get("run_analysis", False):
-            # Clear the flag
-            st.session_state.run_analysis = False
             
             # Show modern loading animation in placeholder area
             loading_placeholder = st.empty()
@@ -399,8 +397,7 @@ def show_main_page():
                 <head>
                     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
                     <style>
-                        /* Debugging background - remove later */
-                        body { margin: 0; padding: 0; background: aliceblue; } 
+                        body { margin: 0; padding: 0; background: transparent; }
                         @keyframes dots {
                             0%, 20% { content: '.'; }
                             40% { content: '..'; }
@@ -412,8 +409,7 @@ def show_main_page():
                             align-items: center;
                             justify-content: center;
                             height: 350px;
-                            /* Debugging background - remove later */
-                            background: aliceblue; 
+                            background: transparent;
                         }
                         #text-canvas {
                             width: 800px;
@@ -590,6 +586,7 @@ def show_main_page():
                 current_provider = st.session_state.get("selected_provider", "gemini")
                 results = map_activity_to_competency(current_activity, st.session_state.framework_data, provider=current_provider)
                 st.session_state.markdown_report = generate_markdown_content(results)
+                st.session_state.run_analysis = False
                 loading_placeholder.empty()  # Clear loading animation
                 st.rerun()
             except Exception as e:
