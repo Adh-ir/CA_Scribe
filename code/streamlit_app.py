@@ -508,27 +508,28 @@ def show_main_page():
                                 const particles = [];
                                 const step = 2; 
                                 
-                                for (let y = 0; y < h; y += step) {{
-                                    for (let x = 0; x < w; x += step) {{
+                                for (let y = 0; y < h; y += step) {
+                                    for (let x = 0; x < w; x += step) {
                                         const i = (y * w + x) * 4;
-                                        if (imageData[i + 3] > 128 && Math.random() > 0.4) {{
+                                        // Brightness check + Random culling (Adjusted for ~1200 particles)
+                                        if (imageData[i + 3] > 128 && Math.random() > 0.3) {
                                             const r = imageData[i], g = imageData[i + 1], b = imageData[i + 2];
-                                            particles.push({{
+                                            particles.push({
                                                 ox: x, oy: y,
                                                 // MODE CHECK: If Exit, start formed. If Entry, start random.
                                                 x: (MODE === "EXIT") ? x : Math.random() * w,
                                                 y: (MODE === "EXIT") ? y : Math.random() * h,
-                                                color: `rgb(${{r}},${{g}},${{b}})`,
+                                                color: `rgb(${r},${g},${b})`,
                                                 size: 0.65, 
                                                 phase: Math.random() * Math.PI * 2,
                                                 vx: (Math.random() - 0.5) * 4,
                                                 vy: (Math.random() - 0.5) * 4    
-                                            }});
-                                        }}
-                                    }}
-                                }}
+                                            });
+                                        }
+                                    }
+                                }
                                 return particles;
-                            }}
+                            }
                             
                             let particles = createParticles();
                             
@@ -536,27 +537,33 @@ def show_main_page():
                             let time = 0;
                             const cx = w / 2;
                             const cy = h / 2;
-                            let phase = (MODE === "EXIT") ? "EXPLODE" : "ASSEMBLE"; 
+                            // Start Phase Logic
+                            let phase = "ASSEMBLE"; 
+                            if (MODE === "EXIT") phase = "BREATHE"; // Start visible, then explode
                             
-                            function animate() {{
+                            function animate() {
                                 ctx.clearRect(0, 0, w, h);
                                 time += 0.02;
                                 
                                 // Logic Control
-                                if (MODE === "ENTRY") {{
+                                if (MODE === "ENTRY") {
                                     // Assemble -> Breathe Loop
                                     if (time < 2.5) phase = "ASSEMBLE";
                                     else phase = "BREATHE";
-                                }}
-                                // If MODE === "EXIT", phase stays EXPLODE forever
+                                }
+                                else if (MODE === "EXIT") {
+                                    // Hold for 0.5s, then EXPLODE
+                                    if (time < 0.5) phase = "BREATHE";
+                                    else phase = "EXPLODE";
+                                }
                                 
                                 const breatheScale = 1 + Math.sin(time * 2) * 0.02;
 
-                                particles.forEach(p => {{
-                                    if (phase === "ASSEMBLE") {{
+                                particles.forEach(p => {
+                                    if (phase === "ASSEMBLE") {
                                         p.x += (p.ox - p.x) * 0.05;
                                         p.y += (p.oy - p.y) * 0.05;
-                                    }} else if (phase === "BREATHE") {{
+                                    } else if (phase === "BREATHE") {
                                         const dx = p.ox - cx;
                                         const dy = p.oy - cy;
                                         const bx = cx + dx * breatheScale;
@@ -565,20 +572,20 @@ def show_main_page():
                                         const driftY = Math.cos(time + p.phase * 0.7) * 1.5;
                                         p.x += (bx + driftX - p.x) * 0.1;
                                         p.y += (by + driftY - p.y) * 0.1;
-                                    }} else if (phase === "EXPLODE") {{
+                                    } else if (phase === "EXPLODE") {
                                         p.x += p.vx;
                                         p.y += p.vy;
                                         p.vx *= 1.05; 
                                         p.vy *= 1.05;
-                                    }}
+                                    }
                                     
                                     ctx.fillStyle = p.color;
                                     ctx.beginPath();
                                     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                                     ctx.fill();
-                                }});
+                                });
                                 requestAnimationFrame(animate);
-                            }}
+                            }
                             animate();
                         }})();
                     </script>
@@ -606,7 +613,7 @@ def show_main_page():
                 with loading_placeholder.container():
                     components.html(get_loading_html("EXIT"), height=370)
                 
-                time.sleep(1.2) # Wait for explosion to clear screen
+                time.sleep(2.5) # Extended wait for browser load + 0.5s pause + explosion
                 
                 loading_placeholder.empty()  # Remove
                 st.rerun()
