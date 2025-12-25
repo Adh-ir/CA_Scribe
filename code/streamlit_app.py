@@ -588,6 +588,7 @@ def show_main_page():
                 results = map_activity_to_competency(current_activity, st.session_state.framework_data, provider=current_provider)
                 st.session_state.markdown_report = generate_markdown_content(results)
                 loading_placeholder.empty()  # Clear loading animation
+                st.rerun()
             except Exception as e:
                 loading_placeholder.empty()
                 st.error(f"Analysis failed: {e}")
