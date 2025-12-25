@@ -20,7 +20,7 @@ def generate_markdown_content(mappings):
         lines.append("> No competencies were identified for the given activity.")
     
     for item in mappings:
-        lines.append("<br>\n") # Extra visual space
+        lines.append("\n") # Extra visual space
         lines.append(f"### 🎯 {item.get('name', 'Unknown Competency')}\n")
         
         # Format Code + Description (Learning Outcome)
