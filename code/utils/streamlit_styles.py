@@ -437,34 +437,7 @@ div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:last-child h1
     margin-bottom: 0.5rem !important;
 }
 
-/* --- EXPLICIT REPORT CONTAINER (Restores missing styles) --- */
-.report-scroll-container {
-    max-height: 65vh !important;
-    overflow-y: auto !important;
-    padding-right: 15px !important;
-    margin-top: 10px !important;
-}
 
-.report-scroll-container h1 {
-    color: #1e3a8a !important;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 800 !important;
-    font-size: 1.8rem !important;
-    margin-bottom: 1rem !important;
-    border-bottom: 2px solid #e0f2fe;
-    padding-bottom: 0.5rem;
-}
-
-.report-scroll-container h2 {
-    color: #0369a1 !important;
-    font-size: 1.4rem !important;
-    margin-top: 1.5rem !important;
-}
-
-.report-scroll-container p {
-    color: #334155 !important;
-    line-height: 1.7 !important;
-}
 
 /* --- UI ELEMENTS --- */
 
