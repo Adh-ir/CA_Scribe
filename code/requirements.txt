@@ -5,12 +5,8 @@ openpyxl
 google-genai
 pypdf
 groq
-fastapi
-uvicorn
-python-multipart
 python-dotenv
 python-docx
-jinja2
 openai
 # Pinned to specific version due to custom CSS/HTML that depends on Streamlit's internal structure
 # (data-testid attributes, emotion-cache classes, container hierarchy)

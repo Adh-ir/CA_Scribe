@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import sys
 import time
-import requests
+
 # Deploy Trigger: V3.3 - Force Trigger
 import streamlit.components.v1 as components
 from PIL import Image
@@ -43,7 +43,6 @@ if "framework_data" not in st.session_state:
 if "markdown_report" not in st.session_state:
     st.session_state.markdown_report = ""
 
-# Force global styles immediately
 # Force global styles immediately
 st.markdown(GLOBAL_HACKS_CSS, unsafe_allow_html=True)
 st.markdown(FOCUS_FIX_JS, unsafe_allow_html=True)
@@ -447,7 +446,6 @@ def show_main_page():
     """, unsafe_allow_html=True)
     
     # --- Main Content (The Glass Card) ---
-    # --- Main Content (The Glass Card) ---
     # 2. COLUMNS (Inputs & Report)
     main_col1, main_col2 = st.columns([4, 6], gap="large")
 
@@ -547,11 +545,6 @@ def show_main_page():
         # Check if analysis was triggered
         if st.session_state.get("run_analysis", False):
             
-            # Wrapper for the animation to allow mode switching
-            # Wrapper for the animation to allow mode switching
-            # Wrapper for the animation to allow mode switching
-            # Wrapper for the animation to allow mode switching
-            # Wrapper for the animation to allow mode switching
             # Wrapper for the animation to allow mode switching
             def get_loading_html(mode="ENTRY"):
                 # mode: "ENTRY" (Assemble + Breathe loop) or "EXIT" (Instant Explode)
@@ -877,9 +870,6 @@ def show_main_page():
                     </div>
                 """, unsafe_allow_html=True)
 
-    # Footer
-    # Footer
-    # Footer
     # Footer
     footer_html = """
     <div class="footer-container">

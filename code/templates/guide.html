@@ -4,89 +4,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Key Guide - CA Scribe</title>
+  <title>CA Scribe - API Key Guide</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600&display=swap"
     rel="stylesheet">
   <style>
     body {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+      min-height: 100vh;
+    }
+
+    .logo-ca {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      color: #003B5C;
+    }
+
+    .logo-scribe {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-style: italic;
+      color: #005F88;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(200, 230, 255, 0.5);
+      border-radius: 1.5rem;
+      box-shadow: 0 20px 40px -10px rgba(14, 165, 233, 0.15);
+    }
+
+    .provider-card {
+      background: white;
+      border: 1px solid #e0f2fe;
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .provider-card:hover {
+      border-color: #7dd3fc;
+      box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.2);
+      transform: translateY(-2px);
     }
   </style>
 </head>
 
-<body class="bg-slate-50 min-h-screen p-8">
+<body class="p-6">
   <div class="max-w-3xl mx-auto">
-    <header class="mb-10 text-center">
-      <h1 class="text-3xl font-bold text-slate-800 mb-2">API Key Guide 🔑</h1>
-      <p class="text-slate-500">How to get your free API keys for CA Scribe</p>
-    </header>
-
-    <!-- What is a Key? -->
-    <div class="bg-indigo-50 rounded-2xl p-6 border border-indigo-100 mb-8">
-      <h2 class="text-lg font-bold text-indigo-900 mb-2 flex items-center gap-2">
-        <span>🗝️</span> What is an API Key?
-      </h2>
-      <p class="text-indigo-800 text-sm leading-relaxed mb-3">
-        An API key is a unique passcode that allows CA Scribe to "talk" to AI models like Gemini or GPT-4o. It acts like
-        a secure handshake between our app and the AI provider.
-      </p>
-      <div
-        class="flex items-center gap-2 text-sm text-indigo-900 font-semibold bg-white px-3 py-2 rounded-lg shadow-sm w-fit">
-        <span>✅</span> <span>All keys listed below are 100% FREE to generate!</span>
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="flex items-baseline justify-center gap-1 mb-2">
+        <span class="logo-ca text-4xl">CA</span>
+        <span class="logo-scribe text-4xl relative">
+          Scribe
+          <svg class="absolute -top-1 -right-7 w-6 h-6" viewBox="0 0 24 24" fill="none">
+            <g transform="rotate(28 12 12)">
+              <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#0ea5e9" />
+            </g>
+          </svg>
+        </span>
       </div>
+      <p class="text-slate-600 font-medium">API Key Setup Guide</p>
     </div>
 
-    <div class="space-y-8">
-      <!-- Gemini -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-500">
-        <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <span>✨</span> Google Gemini (Recommended)
+    <!-- Main Card -->
+    <div class="glass-card p-8">
+      <!-- What is an API Key -->
+      <section class="mb-8">
+        <h2 class="text-xl font-bold text-blue-900 mb-3 flex items-center gap-2">
+          <span class="text-2xl">🔑</span> What is an API Key?
         </h2>
-        <ol class="list-decimal list-inside space-y-3 text-slate-600 text-sm">
-          <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank"
-              class="text-blue-600 font-bold hover:underline">Google AI Studio</a>.</li>
-          <li>Sign in with your Google Account.</li>
-          <li>Click <strong>"Create API key"</strong>.</li>
-          <li>Select "Create key in new project" (or existing).</li>
-          <li>Copy the key starting with <code>AIza...</code> and paste it into Scribe.</li>
-        </ol>
-      </div>
+        <p class="text-slate-700 leading-relaxed mb-3">
+          An API key is like a password that lets CA Scribe communicate with AI services (like Google Gemini or OpenAI).
+          It proves you have permission to use the service.
+        </p>
+        <div class="bg-sky-50 border border-sky-200 rounded-lg p-4">
+          <p class="text-sky-800 font-medium">
+            ✅ <strong>Good news:</strong> All supported AI providers offer <strong>free API keys</strong> with generous
+            usage limits!
+          </p>
+        </div>
+      </section>
 
-      <!-- Groq -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-orange-500">
-        <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <span>⚡</span> Groq (Fastest)
-        </h2>
-        <ol class="list-decimal list-inside space-y-3 text-slate-600 text-sm">
-          <li>Go to <a href="https://console.groq.com/keys" target="_blank"
-              class="text-blue-600 font-bold hover:underline">Groq Console</a>.</li>
-          <li>Sign in with Google.</li>
-          <li>Click <strong>"Create API Key"</strong>.</li>
-          <li>Give it any name (e.g. "Scribe").</li>
-          <li>Copy the key starting with <code>gsk_...</code> and paste it into Scribe.</li>
-        </ol>
-      </div>
+      <!-- Provider Cards -->
+      <section class="mb-8">
+        <h2 class="text-xl font-bold text-blue-900 mb-4">Choose Your AI Provider</h2>
 
-      <!-- GitHub -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-slate-700">
-        <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <span>🐙</span> GitHub Models (OpenAI GPT-4o)
-        </h2>
-        <ol class="list-decimal list-inside space-y-3 text-slate-600 text-sm">
-          <li>Go to <a href="https://github.com/settings/tokens" target="_blank"
-              class="text-blue-600 font-bold hover:underline">GitHub Settings > Developer Settings</a>.</li>
-          <li>Select <strong>"Personal access tokens (classic)"</strong>.</li>
-          <li>Click "Generate new token (classic)".</li>
-          <li><strong>Note:</strong> You do NOT need any specific scopes/permissions for Models. Just create it.</li>
-          <li>Alternatively, sign up for <a href="https://github.com/marketplace/models" target="_blank"
-              class="text-blue-600 hover:underline">GitHub Models Marketplace</a> access if prompted.</li>
-          <li>Copy the token (starts with <code>ghp_...</code>) and paste it into Scribe.</li>
-        </ol>
-      </div>
+        <!-- Gemini -->
+        <div class="provider-card p-5 mb-4">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">✨</span>
+              <div>
+                <h3 class="font-bold text-slate-800">Google Gemini</h3>
+                <span class="text-xs font-semibold text-sky-600 bg-sky-100 px-2 py-0.5 rounded-full">RECOMMENDED</span>
+              </div>
+            </div>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank"
+              class="text-sm font-semibold text-sky-600 hover:text-sky-700 transition-colors">
+              Get Free Key →
+            </a>
+          </div>
+          <ol class="text-sm text-slate-600 space-y-2 ml-9">
+            <li>1. Go to <a href="https://aistudio.google.com/app/apikey" target="_blank"
+                class="text-sky-600 underline">Google AI Studio</a></li>
+            <li>2. Sign in with your Google account</li>
+            <li>3. Click "Create API Key"</li>
+            <li>4. Copy the key (starts with <code class="bg-slate-100 px-1 rounded">AIza...</code>)</li>
+          </ol>
+        </div>
+
+        <!-- Groq -->
+        <div class="provider-card p-5 mb-4">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">⚡</span>
+              <div>
+                <h3 class="font-bold text-slate-800">Groq</h3>
+                <span
+                  class="text-xs font-semibold text-orange-500 bg-orange-100 px-2 py-0.5 rounded-full">FASTEST</span>
+              </div>
+            </div>
+            <a href="https://console.groq.com/keys" target="_blank"
+              class="text-sm font-semibold text-sky-600 hover:text-sky-700 transition-colors">
+              Get Free Key →
+            </a>
+          </div>
+          <ol class="text-sm text-slate-600 space-y-2 ml-9">
+            <li>1. Go to <a href="https://console.groq.com/keys" target="_blank" class="text-sky-600 underline">Groq
+                Console</a></li>
+            <li>2. Create an account or sign in</li>
+            <li>3. Navigate to API Keys section</li>
+            <li>4. Create a new key (starts with <code class="bg-slate-100 px-1 rounded">gsk_...</code>)</li>
+          </ol>
+        </div>
+
+        <!-- GitHub Models -->
+        <div class="provider-card p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🐙</span>
+              <div>
+                <h3 class="font-bold text-slate-800">GitHub Models</h3>
+                <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">GPT-4o</span>
+              </div>
+            </div>
+            <a href="https://github.com/settings/tokens" target="_blank"
+              class="text-sm font-semibold text-sky-600 hover:text-sky-700 transition-colors">
+              Get Token →
+            </a>
+          </div>
+          <ol class="text-sm text-slate-600 space-y-2 ml-9">
+            <li>1. Go to <a href="https://github.com/settings/tokens" target="_blank"
+                class="text-sky-600 underline">GitHub Settings → Tokens</a></li>
+            <li>2. Click "Generate new token (classic)"</li>
+            <li>3. Give it a name and select expiration</li>
+            <li>4. Copy the token (starts with <code class="bg-slate-100 px-1 rounded">ghp_...</code>)</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Security Note -->
+      <section class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <h3 class="font-bold text-amber-800 mb-2">🔒 Security Note</h3>
+        <p class="text-amber-700 text-sm">
+          Your API keys are stored securely in your browser session and Streamlit's secrets.
+          They are <strong>never</strong> sent to any third party except the AI provider you choose.
+        </p>
+      </section>
     </div>
 
-    <!-- Back Button Removed -->
+    <!-- Footer -->
+    <div class="text-center mt-6 text-slate-500 text-sm">
+      <p>Made by <a href="https://github.com/Adh-ir" target="_blank" class="text-sky-600 hover:underline">Adhir
+          Singh</a></p>
+    </div>
   </div>
 </body>
 
