@@ -303,9 +303,8 @@ def show_main_page():
             .custom-template-btn {
                 width: 100%;
                 padding: 0.85rem 1.5rem;
-                background: rgba(255, 255, 255, 0.6);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(224, 242, 254, 0.6);
+                background: #ffffff;
+                border: 1px solid #e0f2fe;
                 border-radius: 0.75rem;
                 color: #0369a1;
                 font-weight: 600;
@@ -320,7 +319,7 @@ def show_main_page():
                 gap: 8px;
             }
             .custom-template-btn:hover {
-                background: rgba(255, 255, 255, 0.9);
+                background: #f0f9ff;
                 border-color: #7dd3fc;
                 transform: translateY(-2px);
                 box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.15);
@@ -413,7 +412,7 @@ def show_main_page():
     # Footer
     # Footer
     footer_html = """
-    <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 20px; color: #0284c7; font-family: 'Inter', sans-serif; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 20px 40px -12px rgba(14, 165, 233, 0.1);">
+    <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: #ffffff; border: 1px solid #e0f2fe; border-radius: 20px; color: #0284c7; font-family: 'Inter', sans-serif; width: 100%; box-sizing: border-box; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
         <p style="margin-bottom: 10px; font-size: 1.1rem; color: #0284c7;">Made by <strong style="color: #075985;">Adhir Singh</strong></p>
         <div style="display: flex; justify-content: center; align-items: center; gap: 20px; transform: translateY(-5px);">
             <a href="https://github.com/Adh-ir/SAICA_Scribe/issues" target="_blank" style="text-decoration: none; color: #0284c7; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
