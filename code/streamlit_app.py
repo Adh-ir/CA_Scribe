@@ -408,7 +408,7 @@ def show_main_page():
                             flex-direction: column;
                             align-items: center;
                             justify-content: center;
-                            height: 200px;
+                            height: 350px;
                             background: transparent;
                         }
                         #sphere-canvas {
@@ -453,7 +453,7 @@ def show_main_page():
                             const colors = ['#003B5C', '#005F88', '#0ea5e9', '#7dd3fc'];
                             
                             const particles = [];
-                            const numParticles = 800;
+                            const numParticles = 1200;
                             const goldenRatio = (1 + Math.sqrt(5)) / 2;
                             
                             for (let i = 0; i < numParticles; i++) {
@@ -520,7 +520,7 @@ def show_main_page():
                 </html>
             """
             with loading_placeholder.container():
-                components.html(loading_html, height=220)
+                components.html(loading_html, height=370)
             
             # Run analysis
             try:
