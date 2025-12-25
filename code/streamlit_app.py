@@ -393,9 +393,13 @@ def show_main_page():
             loading_placeholder = st.empty()
             loading_placeholder.markdown("""
                 <style>
+                    @keyframes rotate {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
                     @keyframes pulse {
-                        0%, 100% { transform: scale(1); opacity: 0.8; }
-                        50% { transform: scale(1.1); opacity: 1; }
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.15); }
                     }
                     @keyframes dots {
                         0%, 20% { content: '.'; }
@@ -408,13 +412,32 @@ def show_main_page():
                         align-items: center;
                         justify-content: center;
                         min-height: 400px;
-                        color: #0ea5e9;
                     }
-                    .loading-icon {
-                        animation: pulse 1.5s ease-in-out infinite;
+                    .dot-spinner {
+                        position: relative;
+                        width: 60px;
+                        height: 60px;
+                        animation: rotate 2s linear infinite, pulse 2s ease-in-out infinite;
                     }
+                    .dot-spinner .dot {
+                        position: absolute;
+                        width: 8px;
+                        height: 8px;
+                        background: #0ea5e9;
+                        border-radius: 50%;
+                        top: 50%;
+                        left: 50%;
+                    }
+                    .dot-spinner .dot:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg) translateY(-24px); opacity: 1; }
+                    .dot-spinner .dot:nth-child(2) { transform: translate(-50%, -50%) rotate(45deg) translateY(-24px); opacity: 0.875; }
+                    .dot-spinner .dot:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg) translateY(-24px); opacity: 0.75; }
+                    .dot-spinner .dot:nth-child(4) { transform: translate(-50%, -50%) rotate(135deg) translateY(-24px); opacity: 0.625; }
+                    .dot-spinner .dot:nth-child(5) { transform: translate(-50%, -50%) rotate(180deg) translateY(-24px); opacity: 0.5; }
+                    .dot-spinner .dot:nth-child(6) { transform: translate(-50%, -50%) rotate(225deg) translateY(-24px); opacity: 0.375; }
+                    .dot-spinner .dot:nth-child(7) { transform: translate(-50%, -50%) rotate(270deg) translateY(-24px); opacity: 0.25; }
+                    .dot-spinner .dot:nth-child(8) { transform: translate(-50%, -50%) rotate(315deg) translateY(-24px); opacity: 0.125; }
                     .loading-text {
-                        margin-top: 20px;
+                        margin-top: 24px;
                         font-weight: 600;
                         font-size: 1rem;
                         color: #0369a1;
@@ -432,12 +455,16 @@ def show_main_page():
                     }
                 </style>
                 <div class="loading-container">
-                    <svg class="loading-icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5v1a3 3 0 0 1 3 3v1.5a2.5 2.5 0 0 1-5 0v-.5h-4v.5a2.5 2.5 0 0 1-5 0V13.5a3 3 0 0 1 3-3v-1C4.8 8.8 4 7.5 4 6a4 4 0 0 1 4-4"/>
-                        <circle cx="12" cy="6" r="2"/>
-                        <path d="M9 18v3"/>
-                        <path d="M15 18v3"/>
-                    </svg>
+                    <div class="dot-spinner">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
                     <p class="loading-text">Analyzing with AI<span class="loading-dots"></span></p>
                     <p class="loading-subtext">Mapping competencies from your activity</p>
                 </div>
