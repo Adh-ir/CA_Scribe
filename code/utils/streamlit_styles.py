@@ -142,9 +142,8 @@ header {visibility: hidden;}
 [data-testid="stForm"] {
     position: relative;
     z-index: 10;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    background: #ffffff;
+    /* backdrop-filter: blur(30px); Removed */
     border: 2px solid rgba(147, 197, 253, 0.5);
     box-shadow: 
         0 4px 6px -1px rgba(0, 0, 0, 0.05),
@@ -405,7 +404,7 @@ div[class*="stHorizontalBlock"] {
     border: 4px solid #93c5fd !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02),
                 0 20px 40px -12px rgba(14, 165, 233, 0.1) !important;
-    margin-top: -40px !important;
+    margin-top: -60px !important;
     transition: none !important;
     animation: none !important;
 }
@@ -450,8 +449,10 @@ div[class*="stHorizontalBlock"]:focus-within {
 }
 
 
-/* Primary Button (Gradient Blue) */
-button[kind="primary"] {
+/* --- BUTTON STYLES (Recreated for Flash Removal) --- */
+
+/* Primary Button - Strict Override */
+div.stButton > button[kind="primary"] {
     background: linear-gradient(to right, #0ea5e9, #2563eb) !important;
     color: white !important;
     border: none !important;
@@ -460,32 +461,48 @@ button[kind="primary"] {
     padding: 0.75rem 1.5rem !important;
     transition: transform 0.1s !important;
     box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3) !important;
+    outline: none !important;
 }
 
-button[kind="primary"]:hover {
+div.stButton > button[kind="primary"]:hover {
     transform: translateY(-2px) !important;
     opacity: 0.95 !important;
+    box-shadow: 0 15px 20px -3px rgba(14, 165, 233, 0.4) !important;
 }
 
-button[kind="primary"]:focus,
-button[kind="primary"]:focus-visible {
+div.stButton > button[kind="primary"]:focus,
+div.stButton > button[kind="primary"]:active,
+div.stButton > button[kind="primary"]:focus-visible {
     outline: none !important;
     border: none !important;
-    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3) !important;
+    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3) !important; /* Keep same shadow as normal */
+    transform: translateY(0) !important;
 }
 
-/* Secondary Button (Helper) */
-button[kind="secondary"] {
+/* Secondary Button - Strict Override */
+div.stButton > button[kind="secondary"] {
     border: 1px solid #e0f2fe !important;
     background: white !important;
     color: #0369a1 !important;
+    font-weight: 600 !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem 1.5rem !important;
+    outline: none !important;
 }
 
-button[kind="secondary"]:focus,
-button[kind="secondary"]:focus-visible {
+div.stButton > button[kind="secondary"]:hover {
+    border-color: #7dd3fc !important;
+    color: #0284c7 !important;
+    background: #f0f9ff !important;
+}
+
+div.stButton > button[kind="secondary"]:focus,
+div.stButton > button[kind="secondary"]:active,
+div.stButton > button[kind="secondary"]:focus-visible {
     outline: none !important;
     border: 1px solid #e0f2fe !important;
     box-shadow: none !important;
+    background: white !important;
 }
 
 /* Headings */
