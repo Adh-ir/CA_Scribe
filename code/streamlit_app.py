@@ -382,32 +382,84 @@ def show_main_page():
 
     # --- RIGHT PANEL (Report) ---
     with main_col2:
-        st.markdown(f'<h3 style="color: #1e3a8a; font-family: \'Inter\', sans-serif;">Analysis Report</h3>', unsafe_allow_html=True)
+        st.markdown(f'<h3 style="color: #1e3a8a; font-family: \'Inter\', sans-serif; margin-top: 0; margin-bottom: 1rem;">Analysis Report</h3>', unsafe_allow_html=True)
         
         # Check if analysis was triggered
         if st.session_state.get("run_analysis", False):
             # Clear the flag
             st.session_state.run_analysis = False
             
-            # Run analysis with spinner in the right panel
-            with st.spinner("Analyzing with AI..."):
-                try:
-                    current_activity = st.session_state.get("activity_input", "")
-                    current_provider = st.session_state.get("selected_provider", "gemini")
-                    results = map_activity_to_competency(current_activity, st.session_state.framework_data, provider=current_provider)
-                    st.session_state.markdown_report = generate_markdown_content(results)
-                except Exception as e:
-                    st.error(f"Analysis failed: {e}")
-        
-        # Fixed-height scrollable container for results
-        st.markdown('<div style="height: 450px; overflow-y: auto; padding-right: 10px;">', unsafe_allow_html=True)
+            # Show modern loading animation in placeholder area
+            loading_placeholder = st.empty()
+            loading_placeholder.markdown("""
+                <style>
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); opacity: 0.8; }
+                        50% { transform: scale(1.1); opacity: 1; }
+                    }
+                    @keyframes dots {
+                        0%, 20% { content: '.'; }
+                        40% { content: '..'; }
+                        60%, 100% { content: '...'; }
+                    }
+                    .loading-container {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 20px 0;
+                        color: #0ea5e9;
+                    }
+                    .loading-icon {
+                        animation: pulse 1.5s ease-in-out infinite;
+                    }
+                    .loading-text {
+                        margin-top: 20px;
+                        font-weight: 600;
+                        font-size: 1rem;
+                        color: #0369a1;
+                        font-family: 'Inter', sans-serif;
+                    }
+                    .loading-dots::after {
+                        content: '';
+                        animation: dots 1.5s steps(1, end) infinite;
+                    }
+                    .loading-subtext {
+                        margin-top: 8px;
+                        font-size: 0.85rem;
+                        color: #94a3b8;
+                        font-family: 'Inter', sans-serif;
+                    }
+                </style>
+                <div class="loading-container">
+                    <svg class="loading-icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a4 4 0 0 1 4 4c0 1.5-.8 2.8-2 3.5v1a3 3 0 0 1 3 3v1.5a2.5 2.5 0 0 1-5 0v-.5h-4v.5a2.5 2.5 0 0 1-5 0V13.5a3 3 0 0 1 3-3v-1C4.8 8.8 4 7.5 4 6a4 4 0 0 1 4-4"/>
+                        <circle cx="12" cy="6" r="2"/>
+                        <path d="M9 18v3"/>
+                        <path d="M15 18v3"/>
+                    </svg>
+                    <p class="loading-text">Analyzing with AI<span class="loading-dots"></span></p>
+                    <p class="loading-subtext">Mapping competencies from your activity</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Run analysis
+            try:
+                current_activity = st.session_state.get("activity_input", "")
+                current_provider = st.session_state.get("selected_provider", "gemini")
+                results = map_activity_to_competency(current_activity, st.session_state.framework_data, provider=current_provider)
+                st.session_state.markdown_report = generate_markdown_content(results)
+                loading_placeholder.empty()  # Clear loading animation
+            except Exception as e:
+                loading_placeholder.empty()
+                st.error(f"Analysis failed: {e}")
         
         # Display results or placeholder
         if st.session_state.markdown_report:
             st.markdown(st.session_state.markdown_report)
-        else:
+        elif not st.session_state.get("run_analysis", False):
             st.markdown("""
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 400px; color: #94a3b8; opacity: 0.7;">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; color: #94a3b8; opacity: 0.7;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
@@ -418,10 +470,6 @@ def show_main_page():
                     <p style="margin-top: 20px; font-weight: 500;">Detailed mapping will appear here</p>
                 </div>
             """, unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-                
-        # st.markdown('</div>', unsafe_allow_html=True) # Removed invalid wrapper
 
     # Footer
     # Footer
