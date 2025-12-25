@@ -523,12 +523,31 @@ h1, h2, h3 {
     color: #1e3a8a !important;
     font-size: 0.9rem !important;
 }
+/* --- FOOTER FULL WIDTH BREAKOUT --- */
+.footer-container {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    background: #ffffff;
+    border-top: 1px solid #e0f2fe;
+    text-align: center;
+    padding: 2.5rem 0;
+    margin-top: 3rem;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.02);
+}
 </style>
 """
 
 # --- GLOBAL HACKS & OVERRIDES (Focus & Layout) ---
 GLOBAL_HACKS_CSS = """
 <style>
+/* Prevent horizontal scroll from breakout */
+body {
+    overflow-x: hidden;
+}
 /* Force Transparent Background for App */
 .stApp, [data-testid="stAppViewContainer"] {
     background: transparent !important;
