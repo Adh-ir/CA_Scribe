@@ -529,30 +529,39 @@ def show_main_page():
                             }
                             
                             let time = 0;
+                            const cx = w / 2;
+                            const cy = h / 2;
+                            
+                            // Pre-calculate each particle's direction from center
+                            particles.forEach(p => {
+                                const dx = p.ox - cx;
+                                const dy = p.oy - cy;
+                                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                                p.nx = dx / dist; // normalized direction x
+                                p.ny = dy / dist; // normalized direction y
+                                p.dist = dist;    // distance from center
+                            });
                             
                             function animate() {
                                 ctx.clearRect(0, 0, w, h);
-                                time += 0.03;
+                                time += 0.04;
+                                
+                                // Global breathing wave
+                                const breathe = Math.sin(time * 0.8);
                                 
                                 particles.forEach(p => {
-                                    // Organic wandering motion - each particle drifts independently
-                                    const driftX = Math.sin(time * p.speedX + p.phaseX) * p.amp;
-                                    const driftY = Math.cos(time * p.speedY + p.phaseY) * p.amp;
+                                    // Movement amount based on distance from center
+                                    // Outer particles move more, inner particles move less
+                                    const moveAmount = breathe * (p.dist / 80) * 8;
                                     
-                                    // Secondary subtle motion for more life
-                                    const wobbleX = Math.sin(time * 2.5 + p.phaseY) * 1.5;
-                                    const wobbleY = Math.cos(time * 2.5 + p.phaseX) * 1.5;
-                                    
-                                    const px = p.ox + driftX + wobbleX;
-                                    const py = p.oy + driftY + wobbleY;
-                                    
-                                    // Very subtle size variation
-                                    const sizeVar = 0.9 + Math.sin(time * 1.5 + p.phaseX) * 0.15;
+                                    // Move along the direction from center
+                                    const px = p.ox + p.nx * moveAmount;
+                                    const py = p.oy + p.ny * moveAmount;
                                     
                                     ctx.beginPath();
-                                    ctx.arc(px, py, p.size * sizeVar, 0, Math.PI * 2);
+                                    ctx.arc(px, py, p.size, 0, Math.PI * 2);
                                     ctx.fillStyle = p.color;
-                                    ctx.globalAlpha = 0.85;
+                                    ctx.globalAlpha = 0.9;
                                     ctx.fill();
                                 });
                                 ctx.globalAlpha = 1;
