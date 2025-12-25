@@ -520,7 +520,7 @@ h1, h2, h3 {
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    background: rgba(255, 255, 255, 0.70);
+    background: rgba(255, 255, 255, 0.20);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid rgba(224, 242, 254, 0.8);
