@@ -443,6 +443,12 @@ div[class*="stHorizontalBlock"]:focus-within {
     color: #1e293b;
 }
 
+/* Remove default Streamlit outer border to prevent double-border */
+[data-baseweb="textarea"], [data-baseweb="input"] {
+    border: none !important;
+    background: transparent !important;
+}
+
 .stTextArea textarea:focus, .stSelectbox div[data-baseweb="select"]:focus-within {
     border-color: #cbd5e1;
     /* Removed blue glow: box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2); */
