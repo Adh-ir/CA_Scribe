@@ -3,7 +3,7 @@ import os
 import sys
 import time
 import requests
-# Deploy Trigger: V3.2 - Force Trigger
+# Deploy Trigger: V3.3 - Force Trigger
 import streamlit.components.v1 as components
 from PIL import Image
 
@@ -519,24 +519,37 @@ LOADING_HTML = """
 </html>
 """
 
+
 if not st.session_state.loading_complete:
-    # Fullscreen iframe hack
+    # Fullscreen iframe hack & PADDING OVERRIDE
     st.markdown("""
         <style>
+        /* Hide EVERYTHING at the top */
         header, .stHeader, [data-testid="stHeader"], [data-testid="stDecoration"], [data-testid="stToolbar"] { 
             display: none !important; 
             height: 0 !important;
             visibility: hidden !important;
+            opacity: 0 !important;
         }
+        
+        /* Force background match */
         .stApp { background: #e0f2fe !important; }
-        iframe[title="streamlit.components.v1.html"] {
+        
+        /* Kill container padding */
+        .block-container { 
+            padding-top: 0 !important; 
+            margin-top: 0 !important; 
+        }
+
+        /* Nuclear Iframe Positioning */
+        iframe {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 2147483647;
-            border: none;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 2147483647 !important;
+            border: none !important;
         }
         </style>
     """, unsafe_allow_html=True)
