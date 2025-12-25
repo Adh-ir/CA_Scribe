@@ -816,12 +816,12 @@ def show_main_page():
                 </html>
                 """
 
-            # 1. Display ENTRY Animation IMMEDIATELY
+            # 1. ENTRY PHASE: Show Assemble + Breathe animation
             with loading_placeholder.container():
                 components.html(get_loading_html("ENTRY"), height=370)
             
             # Yield to UI for render
-            time.sleep(0.1)
+            time.sleep(0.5) 
             
             try:
                 # Do Work
