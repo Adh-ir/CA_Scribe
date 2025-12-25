@@ -437,6 +437,25 @@ div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:last-child h1
     margin-bottom: 0.5rem !important;
 }
 
+/* Report H2 Styling - Sky Blue Gradient */
+div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(2) h2,
+div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:last-child h2 {
+    background: -webkit-linear-gradient(120deg, #0284c7, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700 !important;
+    margin-top: 1.5rem !important;
+}
+
+/* Report H3 Styling - Lighter Gradient */
+div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-of-type(2) h3,
+div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:last-child h3 {
+    background: -webkit-linear-gradient(120deg, #0ea5e9, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600 !important;
+}
+
 
 
 /* --- UI ELEMENTS --- */
