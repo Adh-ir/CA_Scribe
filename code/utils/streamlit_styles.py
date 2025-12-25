@@ -510,6 +510,13 @@ h1, h2, h3 {
     font-family: 'Inter', sans-serif;
     color: #0f172a;
 }
+
+/* Labels Bold Override */
+.stTextArea label, .stSelectbox label, .stTextArea label p, .stSelectbox label p {
+    font-weight: 700 !important;
+    color: #1e3a8a !important;
+    font-size: 0.9rem !important;
+}
 </style>
 """
 
