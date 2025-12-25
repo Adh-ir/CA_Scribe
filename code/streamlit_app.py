@@ -518,7 +518,7 @@ def show_main_page():
                                 // Sample Pixels
                                 const imageData = tempCtx.getImageData(0, 0, w, h).data;
                                 const particles = [];
-                                const step = 3; // Coarser step for performance
+                                const step = 1; // High density for solid look
                                 
                                 for (let y = 0; y < h; y += step) {
                                     for (let x = 0; x < w; x += step) {
