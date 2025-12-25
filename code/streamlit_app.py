@@ -900,3 +900,4 @@ if __name__ == "__main__":
             show_main_page()
     else:
         show_setup_page()
+# Force update
