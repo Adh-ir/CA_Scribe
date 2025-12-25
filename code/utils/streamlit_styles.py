@@ -582,9 +582,9 @@ button[data-testid="stBaseButton-secondary"]:hover,
 [data-testid="stBaseButton-secondary"]:hover {
     background: #f0f9ff !important;
     background-color: #f0f9ff !important;
-    border-color: #7dd3fc !important;
+    border-color: #38bdf8 !important; /* Sky 400 - Stronger Border */
     transform: translateY(-2px) !important;
-    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.15) !important;
+    box-shadow: 0 15px 20px -3px rgba(14, 165, 233, 0.4) !important; /* Stronger Glow matching Primary */
     color: #0284c7 !important;
 }
 
