@@ -397,7 +397,8 @@ html, body, [class*="css"] {
 }
 
 /* NUCLEAR FIX: Force ALL Horizontal Blocks to be White + Padded */
-div[class*="stHorizontalBlock"] {
+/* NUCLEAR FIX: Force ALL Horizontal Blocks to be White + Padded */
+[data-testid="stHorizontalBlock"] {
     background-color: #ffffff !important;
     border-radius: 20px;
     padding: 30px !important;
@@ -410,12 +411,17 @@ div[class*="stHorizontalBlock"] {
 }
 
 /* Prevent focus-related visual changes on horizontal block */
-div[class*="stHorizontalBlock"]:focus,
-div[class*="stHorizontalBlock"]:focus-within {
+[data-testid="stHorizontalBlock"]:focus,
+[data-testid="stHorizontalBlock"]:focus-within {
+    background-color: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 30px !important;
     border: 4px solid #93c5fd !important;
     outline: none !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02),
                 0 20px 40px -12px rgba(14, 165, 233, 0.1) !important;
+    transition: none !important;
+    animation: none !important;
 }
 
 /* --- LOGO STYLES (From Local Index.html) --- */
