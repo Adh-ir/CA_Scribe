@@ -524,25 +524,31 @@ def show_main_page():
                                 ctx.clearRect(0, 0, w, h);
                                 time += 0.05;
                                 
-                                // Global breathing
-                                const breathe = 1 + Math.sin(time * 0.8) * 0.03;
                                 const cx = w / 2;
                                 const cy = h / 2;
                                 
                                 particles.forEach(p => {
-                                    // Local shimmer
-                                    const shimmer = Math.sin(time * 2 + p.phase) * 0.3 + 0.7;
+                                    // Individual breathing - each particle has its own phase
+                                    const particleBreathe = Math.sin(time * 1.2 + p.phase) * 5;
                                     
-                                    // Position with breathing from center
+                                    // Direction from center for this particle
                                     const dx = p.x - cx;
                                     const dy = p.y - cy;
-                                    const px = cx + dx * breathe;
-                                    const py = cy + dy * breathe;
+                                    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                                    const nx = dx / dist;
+                                    const ny = dy / dist;
+                                    
+                                    // Move outward/inward based on individual phase
+                                    const px = p.x + nx * particleBreathe;
+                                    const py = p.y + ny * particleBreathe;
+                                    
+                                    // Size shimmer
+                                    const shimmer = Math.sin(time * 2 + p.phase) * 0.3 + 0.85;
                                     
                                     ctx.beginPath();
                                     ctx.arc(px, py, p.size * shimmer, 0, Math.PI * 2);
                                     ctx.fillStyle = p.color;
-                                    ctx.globalAlpha = 0.6 + shimmer * 0.4;
+                                    ctx.globalAlpha = 0.7 + shimmer * 0.3;
                                     ctx.fill();
                                 });
                                 ctx.globalAlpha = 1;
