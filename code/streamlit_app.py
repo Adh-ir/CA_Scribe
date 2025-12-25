@@ -147,7 +147,7 @@ def show_setup_page():
                      <span class="logo-main" style="font-size: 4rem;">CA</span>
                      <span class="logo-scribe" style="font-size: 4rem; position: relative;">
                         Scribe 
-                        <span style="position: absolute; top: -8px; right: -28px; font-size: 1.75rem; color: #0ea5e9;">✦</span>
+                        <span style="position: absolute; top: -5px; right: -30px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(28deg);"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#0ea5e9"/></svg></span>
                      </span>
                 </div>
                 <div style="font-family: 'Inter', sans-serif; font-weight: 600; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; font-size: 0.85rem; margin-top: -0.25rem;">
@@ -272,7 +272,7 @@ def render_settings_page():
                      <span class="logo-main" style="font-size: 2.4rem;">CA</span>
                      <span class="logo-scribe" style="font-size: 2.4rem; position: relative;">
                         Scribe 
-                        <span style="position: absolute; top: -6px; right: -24px; font-size: 1.5rem; color: #0ea5e9;">✦</span>
+                        <span style="position: absolute; top: -5px; right: -26px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(28deg);"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#0ea5e9"/></svg></span>
                      </span>
                 </div>
                 <h2 style="font-family: 'Inter', sans-serif; color: #1e293b; font-size: 1.25rem;">API Configuration</h2>

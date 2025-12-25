@@ -51,7 +51,7 @@ LOADING_HTML = r"""<!DOCTYPE html>
        <div class="brand-row">
           <span class="brand-ca" id="dom-ca">CA</span>
           <span class="brand-scribe" id="dom-scribe">Scribe</span>
-          <span class="brand-star" id="dom-star">✦</span>
+          <span class="brand-star" id="dom-star" style="display: inline-flex; align-items: center;"><svg width="45" height="45" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(28deg);"><path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#0ea5e9"/></svg></span>
        </div>
        <div class="brand-subtitle" id="dom-sub">AI-Powered Competency Mapper</div>
     </div>
