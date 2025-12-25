@@ -404,7 +404,7 @@ div[class*="stHorizontalBlock"] {
     border: 4px solid #93c5fd !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02),
                 0 20px 40px -12px rgba(14, 165, 233, 0.1) !important;
-    margin-top: -60px !important;
+    margin-top: -40px !important;
     transition: none !important;
     animation: none !important;
 }
@@ -542,7 +542,7 @@ header, [data-testid="stHeader"] {
     padding-bottom: 2rem !important;
     padding-left: 2rem !important;
     padding-right: 2rem !important;
-    margin-top: -40px !important;
+    margin-top: -60px !important;
     margin-left: auto !important;
     margin-right: auto !important;
 }
