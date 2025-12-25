@@ -531,11 +531,11 @@ def show_main_page():
         if not st.session_state.get("markdown_report") and not st.session_state.get("run_analysis", False):
             st.markdown(f'<h3 style="color: #1e3a8a; font-family: \'Inter\', sans-serif; margin-top: 0; margin-bottom: 1rem;">Analysis Report</h3>', unsafe_allow_html=True)
         
+        # Create a SINGLE placeholder for all content (loading, report, or empty state)
+        content_area = st.empty()
+        
         # Check if analysis was triggered
         if st.session_state.get("run_analysis", False):
-            
-            # Show modern loading animation in placeholder area
-            loading_placeholder = st.empty()
             
             # Wrapper for the animation to allow mode switching
             # Wrapper for the animation to allow mode switching
@@ -816,8 +816,8 @@ def show_main_page():
                 </html>
                 """
 
-            # 1. ENTRY PHASE: Show Assemble + Breathe animation
-            with loading_placeholder.container():
+            # 1. ENTRY PHASE: Show            # 1. Display ENTRY Animation IMMEDIATELY
+            with content_area.container():
                 components.html(get_loading_html("ENTRY"), height=370)
             
             # Yield to UI for render
@@ -832,34 +832,36 @@ def show_main_page():
                 st.session_state.run_analysis = False
                 
                 # 2. EXIT PHASE: Explode
-                with loading_placeholder.container():
+                with content_area.container():
                     components.html(get_loading_html("EXIT"), height=370)
                 
                 time.sleep(1.0) # Brief wait for explosion animation
                 
-                loading_placeholder.empty()  # Remove
+                content_area.empty()  # Remove
                 st.rerun()
                 
             except Exception as e:
-                loading_placeholder.empty()
+                content_area.empty()
                 st.error(f"Analysis failed: {e}")
         
         # Display results or placeholder
         if st.session_state.markdown_report:
-            st.markdown(st.session_state.markdown_report)
+            with content_area.container():
+                st.markdown(st.session_state.markdown_report)
         elif not st.session_state.get("run_analysis", False):
-            st.markdown("""
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; color: #94a3b8; opacity: 0.7;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                    <p style="margin-top: 20px; font-weight: 500;">Detailed mapping will appear here</p>
-                </div>
-            """, unsafe_allow_html=True)
+            with content_area.container():
+                st.markdown("""
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; color: #94a3b8; opacity: 0.7;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <p style="margin-top: 20px; font-weight: 500;">Detailed mapping will appear here</p>
+                    </div>
+                """, unsafe_allow_html=True)
 
     # Footer
     # Footer
