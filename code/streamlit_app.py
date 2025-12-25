@@ -393,14 +393,6 @@ def show_main_page():
             loading_placeholder = st.empty()
             loading_placeholder.markdown("""
                 <style>
-                    @keyframes sphere-rotate {
-                        0% { transform: rotateX(0deg) rotateY(0deg); }
-                        100% { transform: rotateX(360deg) rotateY(360deg); }
-                    }
-                    @keyframes breathe {
-                        0%, 100% { transform: scale(1); }
-                        50% { transform: scale(1.1); }
-                    }
                     @keyframes dots {
                         0%, 20% { content: '.'; }
                         40% { content: '..'; }
@@ -413,62 +405,12 @@ def show_main_page():
                         justify-content: center;
                         min-height: 400px;
                     }
-                    .sphere-wrapper {
-                        perspective: 800px;
-                        animation: breathe 3s ease-in-out infinite;
+                    #sphere-canvas {
+                        width: 80px;
+                        height: 80px;
                     }
-                    .particle-sphere {
-                        position: relative;
-                        width: 60px;
-                        height: 60px;
-                        transform-style: preserve-3d;
-                        animation: sphere-rotate 4s linear infinite;
-                    }
-                    .particle {
-                        position: absolute;
-                        width: 2px;
-                        height: 2px;
-                        background: #0ea5e9;
-                        border-radius: 50%;
-                        top: 50%;
-                        left: 50%;
-                    }
-                    /* Ring 1 - Equator */
-                    .particle.r1-1 { transform: translate(-50%, -50%) rotateY(0deg) translateZ(28px); }
-                    .particle.r1-2 { transform: translate(-50%, -50%) rotateY(30deg) translateZ(28px); }
-                    .particle.r1-3 { transform: translate(-50%, -50%) rotateY(60deg) translateZ(28px); }
-                    .particle.r1-4 { transform: translate(-50%, -50%) rotateY(90deg) translateZ(28px); }
-                    .particle.r1-5 { transform: translate(-50%, -50%) rotateY(120deg) translateZ(28px); }
-                    .particle.r1-6 { transform: translate(-50%, -50%) rotateY(150deg) translateZ(28px); }
-                    .particle.r1-7 { transform: translate(-50%, -50%) rotateY(180deg) translateZ(28px); }
-                    .particle.r1-8 { transform: translate(-50%, -50%) rotateY(210deg) translateZ(28px); }
-                    .particle.r1-9 { transform: translate(-50%, -50%) rotateY(240deg) translateZ(28px); }
-                    .particle.r1-10 { transform: translate(-50%, -50%) rotateY(270deg) translateZ(28px); }
-                    .particle.r1-11 { transform: translate(-50%, -50%) rotateY(300deg) translateZ(28px); }
-                    .particle.r1-12 { transform: translate(-50%, -50%) rotateY(330deg) translateZ(28px); }
-                    /* Ring 2 - Upper */
-                    .particle.r2-1 { transform: translate(-50%, -50%) rotateX(45deg) rotateY(0deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r2-2 { transform: translate(-50%, -50%) rotateX(45deg) rotateY(45deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r2-3 { transform: translate(-50%, -50%) rotateX(45deg) rotateY(90deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r2-4 { transform: translate(-50%, -50%) rotateX(45deg) rotateY(135deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r2-5 { transform: translate(-50%, -50%) rotateX(45deg) rotateY(180deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r2-6 { transform: translate(-50%, -50%) rotateX(45deg) rotateY(225deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r2-7 { transform: translate(-50%, -50%) rotateX(45deg) rotateY(270deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r2-8 { transform: translate(-50%, -50%) rotateX(45deg) rotateY(315deg) translateZ(28px); opacity: 0.8; }
-                    /* Ring 3 - Lower */
-                    .particle.r3-1 { transform: translate(-50%, -50%) rotateX(-45deg) rotateY(22deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r3-2 { transform: translate(-50%, -50%) rotateX(-45deg) rotateY(67deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r3-3 { transform: translate(-50%, -50%) rotateX(-45deg) rotateY(112deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r3-4 { transform: translate(-50%, -50%) rotateX(-45deg) rotateY(157deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r3-5 { transform: translate(-50%, -50%) rotateX(-45deg) rotateY(202deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r3-6 { transform: translate(-50%, -50%) rotateX(-45deg) rotateY(247deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r3-7 { transform: translate(-50%, -50%) rotateX(-45deg) rotateY(292deg) translateZ(28px); opacity: 0.8; }
-                    .particle.r3-8 { transform: translate(-50%, -50%) rotateX(-45deg) rotateY(337deg) translateZ(28px); opacity: 0.8; }
-                    /* Poles */
-                    .particle.pole-top { transform: translate(-50%, -50%) rotateX(90deg) translateZ(28px); }
-                    .particle.pole-bottom { transform: translate(-50%, -50%) rotateX(-90deg) translateZ(28px); }
                     .loading-text {
-                        margin-top: 28px;
+                        margin-top: 24px;
                         font-weight: 600;
                         font-size: 1rem;
                         color: #0369a1;
@@ -486,24 +428,91 @@ def show_main_page():
                     }
                 </style>
                 <div class="loading-container">
-                    <div class="sphere-wrapper">
-                        <div class="particle-sphere">
-                            <div class="particle r1-1"></div><div class="particle r1-2"></div><div class="particle r1-3"></div>
-                            <div class="particle r1-4"></div><div class="particle r1-5"></div><div class="particle r1-6"></div>
-                            <div class="particle r1-7"></div><div class="particle r1-8"></div><div class="particle r1-9"></div>
-                            <div class="particle r1-10"></div><div class="particle r1-11"></div><div class="particle r1-12"></div>
-                            <div class="particle r2-1"></div><div class="particle r2-2"></div><div class="particle r2-3"></div>
-                            <div class="particle r2-4"></div><div class="particle r2-5"></div><div class="particle r2-6"></div>
-                            <div class="particle r2-7"></div><div class="particle r2-8"></div>
-                            <div class="particle r3-1"></div><div class="particle r3-2"></div><div class="particle r3-3"></div>
-                            <div class="particle r3-4"></div><div class="particle r3-5"></div><div class="particle r3-6"></div>
-                            <div class="particle r3-7"></div><div class="particle r3-8"></div>
-                            <div class="particle pole-top"></div><div class="particle pole-bottom"></div>
-                        </div>
-                    </div>
+                    <canvas id="sphere-canvas" width="160" height="160"></canvas>
                     <p class="loading-text">Analyzing with AI<span class="loading-dots"></span></p>
                     <p class="loading-subtext">Mapping competencies from your activity</p>
                 </div>
+                <script>
+                    (function() {
+                        const canvas = document.getElementById('sphere-canvas');
+                        if (!canvas) return;
+                        const ctx = canvas.getContext('2d');
+                        const w = canvas.width;
+                        const h = canvas.height;
+                        const cx = w / 2;
+                        const cy = h / 2;
+                        const radius = 55;
+                        const colors = ['#003B5C', '#005F88', '#0ea5e9', '#7dd3fc'];
+                        
+                        // Generate ~1000 points on sphere using fibonacci spiral
+                        const particles = [];
+                        const numParticles = 800;
+                        const goldenRatio = (1 + Math.sqrt(5)) / 2;
+                        
+                        for (let i = 0; i < numParticles; i++) {
+                            const theta = 2 * Math.PI * i / goldenRatio;
+                            const phi = Math.acos(1 - 2 * (i + 0.5) / numParticles);
+                            const x = Math.cos(theta) * Math.sin(phi);
+                            const y = Math.sin(theta) * Math.sin(phi);
+                            const z = Math.cos(phi);
+                            const color = colors[Math.floor(Math.random() * colors.length)];
+                            const size = 0.5 + Math.random() * 1;
+                            particles.push({ x, y, z, color, size });
+                        }
+                        
+                        let rotX = 0;
+                        let rotY = 0;
+                        let scale = 1;
+                        let scaleDir = 1;
+                        
+                        function animate() {
+                            ctx.clearRect(0, 0, w, h);
+                            
+                            rotX += 0.008;
+                            rotY += 0.012;
+                            
+                            // Breathing effect
+                            scale += 0.003 * scaleDir;
+                            if (scale > 1.08) scaleDir = -1;
+                            if (scale < 0.92) scaleDir = 1;
+                            
+                            const cosX = Math.cos(rotX);
+                            const sinX = Math.sin(rotX);
+                            const cosY = Math.cos(rotY);
+                            const sinY = Math.sin(rotY);
+                            
+                            // Sort by z for depth
+                            const projected = particles.map(p => {
+                                let x = p.x, y = p.y, z = p.z;
+                                // Rotate around X
+                                let y1 = y * cosX - z * sinX;
+                                let z1 = y * sinX + z * cosX;
+                                // Rotate around Y
+                                let x1 = x * cosY + z1 * sinY;
+                                let z2 = -x * sinY + z1 * cosY;
+                                return { x: x1, y: y1, z: z2, color: p.color, size: p.size };
+                            }).sort((a, b) => a.z - b.z);
+                            
+                            projected.forEach(p => {
+                                const depth = (p.z + 1) / 2;
+                                const px = cx + p.x * radius * scale;
+                                const py = cy + p.y * radius * scale;
+                                const alpha = 0.3 + depth * 0.7;
+                                const sz = p.size * (0.5 + depth * 0.5);
+                                
+                                ctx.beginPath();
+                                ctx.arc(px, py, sz, 0, Math.PI * 2);
+                                ctx.fillStyle = p.color;
+                                ctx.globalAlpha = alpha;
+                                ctx.fill();
+                            });
+                            ctx.globalAlpha = 1;
+                            
+                            requestAnimationFrame(animate);
+                        }
+                        animate();
+                    })();
+                </script>
             """, unsafe_allow_html=True)
             
             # Run analysis
