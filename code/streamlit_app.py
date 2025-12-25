@@ -511,7 +511,7 @@ def show_main_page():
                                     if (imageData[i + 3] > 128) {
                                         const r = imageData[i], g = imageData[i + 1], b = imageData[i + 2];
                                         const color = `rgb(${r},${g},${b})`;
-                                        const size = 0.8;
+                                        const size = 0.6;
                                         // Random movement properties for each particle
                                         const speedX = (Math.random() - 0.5) * 0.8;
                                         const speedY = (Math.random() - 0.5) * 0.8;
