@@ -415,7 +415,7 @@ html, body, [class*="css"] {
 
 /* Vertical Separator for the Report Column (Right Side) */
 [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-of-type(2) {
-    border-left: 2px solid #93c5fd !important;
+    border-left: 2px solid rgba(147, 197, 253, 0.5) !important;
     padding-left: 2rem !important;
 }
 
