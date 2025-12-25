@@ -391,196 +391,22 @@ def show_main_page():
             
             # Show modern loading animation in placeholder area
             loading_placeholder = st.empty()
+            
+            # Debugging: Simple static HTML to test rendering
             loading_html = """
                 <!DOCTYPE html>
                 <html>
-                <head>
-                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-                    <style>
-                        body { margin: 0; padding: 0; background: transparent; }
-                        @keyframes dots {
-                            0%, 20% { content: '.'; }
-                            40% { content: '..'; }
-                            60%, 100% { content: '...'; }
-                        }
-                        .loading-container {
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            height: 350px;
-                            background: transparent;
-                        }
-                        #text-canvas {
-                            width: 800px;
-                            height: 200px;
-                        }
-                        .loading-text {
-                            margin-top: 20px;
-                            font-weight: 600;
-                            font-size: 1rem;
-                            color: #0369a1;
-                            font-family: 'Inter', sans-serif;
-                        }
-                        .loading-dots::after {
-                            content: '';
-                            animation: dots 1.5s steps(1, end) infinite;
-                        }
-                        .loading-subtext {
-                            margin-top: 6px;
-                            font-size: 0.85rem;
-                            color: #94a3b8;
-                            font-family: 'Inter', sans-serif;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="loading-container">
-                        <canvas id="text-canvas" width="800" height="200"></canvas>
-                        <p class="loading-text">Analyzing with AI<span class="loading-dots"></span></p>
-                        <p class="loading-subtext">Mapping competencies from your activity</p>
-                    </div>
-                    <script>
-                        // Execute immediately to prevent blocking
-                        const canvas = document.getElementById('text-canvas');
-                        if (canvas) {
-                            const ctx = canvas.getContext('2d');
-                            const w = canvas.width;
-                            const h = canvas.height;
-                            
-                            const colors = {
-                                ca: '#003B5C',
-                                scribe: '#005F88', 
-                                star: '#0ea5e9'
-                            };
-                            
-                            // Draw text to get pixel positions
-                            const tempCanvas = document.createElement('canvas');
-                            tempCanvas.width = w;
-                            tempCanvas.height = h;
-                            const tempCtx = tempCanvas.getContext('2d');
-                            
-                            const fontSize = 100;
-                            const baseY = h / 2 + fontSize / 3;
-                            
-                            // Measure total width first for centering
-                            tempCtx.font = `800 ${fontSize}px Inter`;
-                            const caWidth = tempCtx.measureText('CA').width;
-                            tempCtx.font = `italic 600 ${fontSize}px 'Playfair Display'`;
-                            const scribeWidth = tempCtx.measureText('Scribe').width;
-                            const starSize = fontSize * 0.35;
-                            const spacing = 8;
-                            const totalWidth = caWidth + spacing + scribeWidth + spacing + starSize * 2;
-                            const startX = (w - totalWidth) / 2;
-                            
-                            // Draw CA
-                            tempCtx.font = `800 ${fontSize}px Inter`;
-                            tempCtx.fillStyle = colors.ca;
-                            tempCtx.fillText('CA', startX, baseY);
-                            
-                            // Draw Scribe
-                            tempCtx.font = `italic 600 ${fontSize}px 'Playfair Display'`;
-                            tempCtx.fillStyle = colors.scribe;
-                            tempCtx.fillText('Scribe', startX + caWidth + spacing, baseY);
-                            
-                            // Draw star
-                            const starX = startX + caWidth + spacing + scribeWidth + spacing + starSize;
-                            const starY = baseY - fontSize * 0.6;
-                            tempCtx.fillStyle = colors.star;
-                            tempCtx.beginPath();
-                            const sx = starX, sy = starY;
-                            tempCtx.moveTo(sx, sy - starSize);
-                            tempCtx.lineTo(sx + starSize * 0.35, sy - starSize * 0.35);
-                            tempCtx.lineTo(sx + starSize, sy);
-                            tempCtx.lineTo(sx + starSize * 0.35, sy + starSize * 0.35);
-                            tempCtx.lineTo(sx, sy + starSize);
-                            tempCtx.lineTo(sx - starSize * 0.35, sy + starSize * 0.35);
-                            tempCtx.lineTo(sx - starSize, sy);
-                            tempCtx.lineTo(sx - starSize * 0.35, sy - starSize * 0.35);
-                            tempCtx.closePath();
-                            tempCtx.fill();
-                            
-                            // Sample pixels
-                            const imageData = tempCtx.getImageData(0, 0, w, h).data;
-                            const particles = [];
-                            const step = 2;
-                            
-                            for (let y = 0; y < h; y += step) {
-                                for (let x = 0; x < w; x += step) {
-                                    const i = (y * w + x) * 4;
-                                    if (imageData[i + 3] > 128) {
-                                        const r = imageData[i], g = imageData[i + 1], b = imageData[i + 2];
-                                        const color = `rgb(${r},${g},${b})`;
-                                        const size = 0.6;
-                                        // Random movement properties for each particle
-                                        const speedX = (Math.random() - 0.5) * 0.8;
-                                        const speedY = (Math.random() - 0.5) * 0.8;
-                                        const phaseX = Math.random() * Math.PI * 2;
-                                        const phaseY = Math.random() * Math.PI * 2;
-                                        const amp = 6 + Math.random() * 6;
-                                        particles.push({ 
-                                            ox: x, oy: y, // original position
-                                            x, y, 
-                                            color, size, 
-                                            speedX, speedY, phaseX, phaseY, amp
-                                        });
-                                    }
-                                }
-                            }
-                            
-                            let time = 0;
-                            const cx = w / 2;
-                            const cy = h / 2;
-                            
-                            // Pre-calculate each particle's direction from center
-                            particles.forEach(p => {
-                                const dx = p.ox - cx;
-                                const dy = p.oy - cy;
-                                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                                p.nx = dx / dist; // normalized direction x
-                                p.ny = dy / dist; // normalized direction y
-                                p.dist = dist;    // distance from center
-                            });
-                            
-                            function animate() {
-                                ctx.clearRect(0, 0, w, h);
-                                time += 0.04;
-                                
-                                // Global breathing wave
-                                const breathe = Math.sin(time * 0.8);
-                                
-                                particles.forEach(p => {
-                                    // Movement amount based on distance from center with variable speed
-                                    // Outer particles breathe faster (higher frequency)
-                                    // Inner particles breathe slower (lower frequency)
-                                    // Base speed 0.8, increases with distance
-                                    const particleSpeed = 0.8 + (p.dist / 150);
-                                    const particleBreathe = Math.sin(time * particleSpeed);
-                                    
-                                    const moveAmount = particleBreathe * (p.dist / 80) * 8;
-                                    
-                                    // Move along the direction from center
-                                    const px = p.ox + p.nx * moveAmount;
-                                    const py = p.oy + p.ny * moveAmount;
-                                    
-                                    ctx.beginPath();
-                                    ctx.arc(px, py, p.size, 0, Math.PI * 2);
-                                    ctx.fillStyle = p.color;
-                                    ctx.globalAlpha = 0.9;
-                                    ctx.fill();
-                                });
-                                ctx.globalAlpha = 1;
-                                
-                                requestAnimationFrame(animate);
-                            }
-                            animate();
-                        } // End if canvas
-                    </script>
+                <body style="margin:0; padding:0; background: #ffebee; display: flex; align-items: center; justify-content: center; height: 350px;">
+                    <h1 style="color: #c62828; font-family: sans-serif; font-size: 24px;">LOADING ANIMATION TEST</h1>
                 </body>
                 </html>
             """
-            # Run analysis
-            time.sleep(0.5) # Yield to UI
+            with loading_placeholder.container():
+                components.html(loading_html, height=370)
+            
+            # Allow UI to render component (long delay for verification)
+            time.sleep(1.0) # Yield to UI
+            
             try:
                 current_activity = st.session_state.get("activity_input", "")
                 current_provider = st.session_state.get("selected_provider", "gemini")
@@ -646,6 +472,7 @@ def show_guide_page():
         # html_content = html_content.replace('<a href="/"', '<a href="/" target="_top"') -> Button removed
         
         # Render in Iframe to support full HTML/CSS/Tailwind without Markdown interference
+        #components.html(html_content, height=1200, scrolling=True)
         components.html(html_content, height=1200, scrolling=True)
         
     except Exception as e:
