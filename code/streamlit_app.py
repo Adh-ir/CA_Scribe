@@ -253,11 +253,11 @@ def render_settings_page():
         [data-testid="stForm"] {
             background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(20px); 
-            padding: 3rem; 
+            padding: 3rem 3rem 1.2rem 3rem; 
             border-radius: 24px; 
             box-shadow: 0 20px 40px -10px rgba(14, 165, 233, 0.15); 
             border: 1px solid rgba(255, 255, 255, 0.5); 
-            max-width: 460px; 
+            max-width: 500px; 
             margin: 0 auto;
             margin-top: calc(5vh - 50px);
         }
