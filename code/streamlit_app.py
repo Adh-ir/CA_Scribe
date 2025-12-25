@@ -463,22 +463,29 @@ def show_main_page():
                             const fontSize = 52;
                             const baseY = h / 2 + fontSize / 3;
                             
+                            // Measure total width first for centering
+                            tempCtx.font = `800 ${fontSize}px Inter`;
+                            const caWidth = tempCtx.measureText('CA').width;
+                            tempCtx.font = `italic 600 ${fontSize}px 'Playfair Display'`;
+                            const scribeWidth = tempCtx.measureText('Scribe').width;
+                            const starSize = fontSize * 0.35;
+                            const spacing = 8;
+                            const totalWidth = caWidth + spacing + scribeWidth + spacing + starSize * 2;
+                            const startX = (w - totalWidth) / 2;
+                            
                             // Draw CA
                             tempCtx.font = `800 ${fontSize}px Inter`;
                             tempCtx.fillStyle = colors.ca;
-                            tempCtx.fillText('CA', 10, baseY);
-                            const caWidth = tempCtx.measureText('CA').width;
+                            tempCtx.fillText('CA', startX, baseY);
                             
                             // Draw Scribe
                             tempCtx.font = `italic 600 ${fontSize}px 'Playfair Display'`;
                             tempCtx.fillStyle = colors.scribe;
-                            tempCtx.fillText('Scribe', 10 + caWidth + 8, baseY);
-                            const scribeWidth = tempCtx.measureText('Scribe').width;
+                            tempCtx.fillText('Scribe', startX + caWidth + spacing, baseY);
                             
                             // Draw star
-                            const starX = 10 + caWidth + 8 + scribeWidth + 12;
+                            const starX = startX + caWidth + spacing + scribeWidth + spacing + starSize;
                             const starY = baseY - fontSize * 0.6;
-                            const starSize = fontSize * 0.35;
                             tempCtx.fillStyle = colors.star;
                             tempCtx.beginPath();
                             const sx = starX, sy = starY;
@@ -504,7 +511,7 @@ def show_main_page():
                                     if (imageData[i + 3] > 128) {
                                         const r = imageData[i], g = imageData[i + 1], b = imageData[i + 2];
                                         const color = `rgb(${r},${g},${b})`;
-                                        const size = 0.5 + Math.random() * 1;
+                                        const size = 0.5;
                                         const phase = Math.random() * Math.PI * 2;
                                         particles.push({ x, y, color, size, phase });
                                     }
