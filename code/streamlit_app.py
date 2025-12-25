@@ -495,7 +495,7 @@ def show_main_page():
                                 
                                 // Star sizing (matched to logo proportions)
                                 const starFontSize = fontSize * 0.45; 
-                                tempCtx.font = `${starFontSize}px "Inter", sans-serif`; # Use standard font for symbol
+                                tempCtx.font = `${starFontSize}px "Inter", sans-serif`; // Use standard font for symbol
                                 const starWidth = tempCtx.measureText('✦').width;
                                 
                                 const spacing = 12;
@@ -512,8 +512,8 @@ def show_main_page():
                                 tempCtx.fillText('Scribe', startX + caWidth + spacing, baseY);
                                 
                                 // Draw Star (Character match)
-                                const starX = startX + caWidth + spacing + scribeWidth + 5; # Tighter spacing for star
-                                const starY = baseY - (fontSize * 0.4); # Lifted like the CSS logo
+                                const starX = startX + caWidth + spacing + scribeWidth + 5; // Tighter spacing for star
+                                const starY = baseY - (fontSize * 0.4); // Lifted like the CSS logo
                                 tempCtx.font = `${starFontSize}px "Inter", sans-serif`;
                                 tempCtx.fillStyle = colors.star;
                                 tempCtx.fillText('✦', starX, starY);
