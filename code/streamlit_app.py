@@ -385,7 +385,11 @@ def show_main_page():
                     <span class="logo-main" style="font-size: 2.75rem;">CA</span>
                     <span class="logo-scribe" style="font-size: 2.75rem; position: relative;">
                         Scribe 
-                        <span style="font-size: 1.25rem; color: #0ea5e9; position: absolute; top: -6px; right: -20px;">✦</span>
+                        <span style="position: absolute; top: -5px; right: -28px;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(28deg); width: 22px; height: 22px;">
+                                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" fill="#0ea5e9"/>
+                            </svg>
+                        </span>
                     </span>
                 </div>
                 <div style="font-size: 1rem; color: #64748b; font-weight: 500; margin-top: -10px; letter-spacing: 0.025em; padding-left: 0.25rem;">AI-Powered Competency Mapper</div>
