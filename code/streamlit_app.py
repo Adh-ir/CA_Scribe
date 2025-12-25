@@ -521,19 +521,26 @@ def show_main_page():
                                 // Sample Pixels
                                 const imageData = tempCtx.getImageData(0, 0, w, h).data;
                                 const particles = [];
-                                const step = 1; // High density
+                                const step = 2; // Medium density
                                 
                                 for (let y = 0; y < h; y += step) {
                                     for (let x = 0; x < w; x += step) {
                                         const i = (y * w + x) * 4;
-                                        if (imageData[i + 3] > 128) {
+                                        // Brightness check + Random culling to hit ~1000 target
+                                        if (imageData[i + 3] > 128 && Math.random() > 0.4) {
                                             const r = imageData[i], g = imageData[i + 1], b = imageData[i + 2];
                                             particles.push({
+                                                // Target ("Organic") Position
                                                 ox: x, oy: y,
-                                                x: x, y: y,
+                                                // Current Position (Start random for assembly)
+                                                x: Math.random() * w,
+                                                y: Math.random() * h,
                                                 color: `rgb(${r},${g},${b})`,
-                                                size: 0.65, // Fine powder look
-                                                phase: Math.random() * Math.PI * 2
+                                                size: 0.65, 
+                                                phase: Math.random() * Math.PI * 2,
+                                                // Explosion Velocity
+                                                vx: (Math.random() - 0.5) * 4,
+                                                vy: (Math.random() - 0.5) * 4    
                                             });
                                         }
                                     }
@@ -544,32 +551,68 @@ def show_main_page():
                             // Initialize
                             let particles = createParticles();
                             
-                            // Animation Loop
+                            // Animation State
                             let time = 0;
                             const cx = w / 2;
                             const cy = h / 2;
+                            let phase = "ASSEMBLE"; // ASSEMBLE -> BREATHE -> EXPLODE
                             
                             function animate() {
                                 ctx.clearRect(0, 0, w, h);
-                                time += 0.03;
+                                time += 0.02;
                                 
-                                // Breathing Scale (Coordinated)
-                                const scale = 1 + Math.sin(time * 1.5) * 0.03; // +/- 3% expansion
+                                // Cycle Control (Total cycle ~8s)
+                                const cycleTime = time % 8;
                                 
+                                if (cycleTime < 2.5) phase = "ASSEMBLE";
+                                else if (cycleTime < 6.5) phase = "BREATHE";
+                                else phase = "EXPLODE";
+                                
+                                // Global scale for breathing
+                                const breatheScale = 1 + Math.sin(time * 2) * 0.02;
+
                                 particles.forEach(p => {
-                                    // 1. Radial Breathing Position
-                                    const dx = p.ox - cx;
-                                    const dy = p.oy - cy;
-                                    const bx = cx + dx * scale;
-                                    const by = cy + dy * scale;
+                                    if (phase === "ASSEMBLE") {
+                                        // Ease to target
+                                        p.x += (p.ox - p.x) * 0.05;
+                                        p.y += (p.oy - p.y) * 0.05;
+                                        
+                                    } else if (phase === "BREATHE") {
+                                        // Lock to target + Breathing
+                                        // 1. Radial Breathing
+                                        const dx = p.ox - cx;
+                                        const dy = p.oy - cy;
+                                        const bx = cx + dx * breatheScale;
+                                        const by = cy + dy * breatheScale;
+                                        
+                                        // 2. Drift
+                                        const driftX = Math.sin(time + p.phase) * 1.5;
+                                        const driftY = Math.cos(time + p.phase * 0.7) * 1.5;
+                                        
+                                        // Smooth transition from Assemble
+                                        p.x += (bx + driftX - p.x) * 0.1;
+                                        p.y += (by + driftY - p.y) * 0.1;
+                                        
+                                    } else if (phase === "EXPLODE") {
+                                        p.x += p.vx;
+                                        p.y += p.vy;
+                                        p.vx *= 1.05; // Accelerate
+                                        p.vy *= 1.05;
+                                    }
                                     
-                                    // 2. Slight Organic Drift
-                                    const driftX = Math.sin(time + p.phase) * 1.0;
-                                    const driftY = Math.cos(time + p.phase * 0.7) * 1.0;
+                                    // Reset velocities for next cycle
+                                    if (phase !== "EXPLODE") {
+                                        // Recalculate random velocity for next text explosion using consistent seed logic 
+                                        // (or just random is fine for chaos)
+                                        if (Math.abs(p.vx) > 10) {
+                                            p.vx = (Math.random() - 0.5) * 4;
+                                            p.vy = (Math.random() - 0.5) * 4;
+                                        }
+                                    }
                                     
                                     ctx.fillStyle = p.color;
                                     ctx.beginPath();
-                                    ctx.arc(bx + driftX, by + driftY, p.size, 0, Math.PI * 2);
+                                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                                     ctx.fill();
                                 });
                                 
