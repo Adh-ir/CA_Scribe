@@ -36,7 +36,7 @@ LOADING_HTML = r"""<!DOCTYPE html>
     .brand-row { display: flex; align-items: center; line-height: 1; }
     .brand-ca { font-family: 'Inter', sans-serif; font-weight: 800; color: #003B5C; }
     .brand-scribe { font-family: 'Playfair Display', serif; font-weight: 600; font-style: italic; color: #005F88; margin-left: 0.15em; }
-    .brand-star { color: #0ea5e9; margin-left: 0.15em; margin-bottom: 0.4em; }
+    .brand-star { font-family: 'Inter', sans-serif; color: #0ea5e9; margin-left: 0.25em; margin-bottom: 0.4em; }
     .brand-subtitle { font-family: 'Inter', sans-serif; font-weight: 600; color: #334155; margin-top: 15px; letter-spacing: 0.02em; }
     .cross-fade #introCanvas { opacity: 0; }
     .cross-fade #precise-text { opacity: 1; }
@@ -51,9 +51,7 @@ LOADING_HTML = r"""<!DOCTYPE html>
        <div class="brand-row">
           <span class="brand-ca" id="dom-ca">CA</span>
           <span class="brand-scribe" id="dom-scribe">Scribe</span>
-          <svg class="brand-star" id="dom-star" width="0" height="0" viewBox="0 0 24 24" fill="currentColor">
-             <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-          </svg>
+          <span class="brand-star" id="dom-star">✦</span>
        </div>
        <div class="brand-subtitle" id="dom-sub">AI-Powered Competency Mapper</div>
     </div>
@@ -98,11 +96,10 @@ LOADING_HTML = r"""<!DOCTYPE html>
       const mainSize = Math.min(width / 6, 120);
       elCA.style.fontSize = mainSize + 'px';
       elScribe.style.fontSize = mainSize + 'px';
-      const starSize = mainSize * 0.4;
-      elStar.setAttribute('width', starSize);
-      elStar.setAttribute('height', starSize);
-      elStar.style.width = starSize + 'px';
-      elStar.style.height = starSize + 'px';
+      
+      const starSize = mainSize * 0.45; // Matched to main app
+      elStar.style.fontSize = starSize + 'px';
+      
       elSub.style.fontSize = (mainSize * 0.22) + 'px';
     }
 
@@ -140,40 +137,9 @@ LOADING_HTML = r"""<!DOCTYPE html>
        }
        scanElement(elCA, CONFIG.colors.ca);
        scanElement(elScribe, CONFIG.colors.scribe);
+       scanElement(elStar, CONFIG.colors.star); // Generic scan for character
        scanElement(elSub, CONFIG.colors.subtitle);
 
-       // Star scan manual
-       const sRect = elStar.getBoundingClientRect();
-       const sTmp = document.createElement('canvas');
-       sTmp.width = width * dpr;
-       sTmp.height = height * dpr;
-       const sCTX = sTmp.getContext('2d');
-       sCTX.scale(dpr, dpr);
-       sCTX.fillStyle = CONFIG.colors.star;
-       
-       const scaleX = sRect.width / 24;
-       const scaleY = sRect.height / 24;
-       sCTX.translate(sRect.left + CONFIG.offsetX, sRect.top + CONFIG.offsetY);
-       sCTX.scale(scaleX, scaleY);
-       sCTX.beginPath();
-       sCTX.moveTo(12, 0); sCTX.lineTo(14.59, 9.41); sCTX.lineTo(24, 12); sCTX.lineTo(14.59, 14.59);
-       sCTX.lineTo(12, 24); sCTX.lineTo(9.41, 14.59); sCTX.lineTo(0, 12); sCTX.lineTo(9.41, 9.41); sCTX.lineTo(12, 0);
-       sCTX.fill();
-       
-       const sData = sCTX.getImageData(0,0,width*dpr, height*dpr).data;
-       const sStep = CONFIG.densityStep * dpr;
-       const syS = Math.floor((sRect.top+CONFIG.offsetY)*dpr);
-       const syE = Math.floor((sRect.bottom+CONFIG.offsetY)*dpr);
-       const sxS = Math.floor((sRect.left+CONFIG.offsetX)*dpr);
-       const sxE = Math.floor((sRect.right+CONFIG.offsetX)*dpr);
-
-       for(let sy=syS; sy<syE; sy+=sStep){
-          for(let sx=sxS; sx<sxE; sx+=sStep){
-             if(sData[(sy * width * dpr + sx) * 4 + 3]>200) {
-                targets.push({x: sx/dpr, y: sy/dpr, color: CONFIG.colors.star});
-             }
-          }
-       }
        return targets;
     }
 
