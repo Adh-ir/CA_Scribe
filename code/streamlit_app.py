@@ -550,9 +550,14 @@ def show_main_page():
                                 const breathe = Math.sin(time * 0.8);
                                 
                                 particles.forEach(p => {
-                                    // Movement amount based on distance from center
-                                    // Outer particles move more, inner particles move less
-                                    const moveAmount = breathe * (p.dist / 80) * 8;
+                                    // Movement amount based on distance from center with variable speed
+                                    // Outer particles breathe faster (higher frequency)
+                                    // Inner particles breathe slower (lower frequency)
+                                    // Base speed 0.8, increases with distance
+                                    const particleSpeed = 0.8 + (p.dist / 150);
+                                    const particleBreathe = Math.sin(time * particleSpeed);
+                                    
+                                    const moveAmount = particleBreathe * (p.dist / 80) * 8;
                                     
                                     // Move along the direction from center
                                     const px = p.ox + p.nx * moveAmount;
