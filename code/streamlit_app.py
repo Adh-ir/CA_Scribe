@@ -582,6 +582,7 @@ def show_main_page():
                 </html>
             """
             # Run analysis
+            time.sleep(0.1) # Yield to UI
             try:
                 current_activity = st.session_state.get("activity_input", "")
                 current_provider = st.session_state.get("selected_provider", "gemini")
@@ -595,7 +596,7 @@ def show_main_page():
         
         # Display results or placeholder
         if st.session_state.markdown_report:
-            st.markdown(st.session_state.markdown_report)
+            st.markdown(f'<div class="report-scroll-container">{st.session_state.markdown_report}</div>', unsafe_allow_html=True)
         elif not st.session_state.get("run_analysis", False):
             st.markdown("""
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; color: #94a3b8; opacity: 0.7;">
