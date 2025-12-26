@@ -95,7 +95,7 @@ header {visibility: hidden;}
 .fluid-shape {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px); /* Increased blur */
+    filter: blur(50px); /* Reduced for performance */
     opacity: 0.4; /* Reduced opacity */
     animation: fluid-move 14s infinite ease-in-out;
     will-change: transform;
@@ -321,7 +321,7 @@ html, body, [class*="css"] {
 .fluid-shape {
     position: absolute;
     border-radius: 50%;
-    filter: blur(65px);
+    filter: blur(50px);
     opacity: 0.9;
     animation: fluid-move 14s infinite ease-in-out;
     will-change: transform;

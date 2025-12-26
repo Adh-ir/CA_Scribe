@@ -40,7 +40,7 @@ LOADING_HTML = """
     .fluid-shape {
         position: absolute;
         border-radius: 50%;
-        filter: blur(80px);
+        filter: blur(50px);
         opacity: 0.4;
         animation: fluid-move 14s infinite ease-in-out;
         will-change: transform;
