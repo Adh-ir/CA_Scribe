@@ -901,12 +901,13 @@ def show_main_page():
                 st.session_state.markdown_report = generate_markdown_content(results)
                 st.session_state.run_analysis = False
                 
-                # 2. EXIT PHASE: Explode
+                # 2. EXIT PHASE: Explode - clear first, then show
+                content_area.empty()
                 with content_area.container():
                     st.markdown('<style>iframe { border: none !important; }</style>', unsafe_allow_html=True)
                     components.html(get_loading_html("EXIT"), height=370, scrolling=False)
                 
-                time.sleep(1.3) # Match the 1.2s fade-out animation
+                time.sleep(1.5) # Wait for 1.2s fade-out animation + buffer
                 
                 content_area.empty()  # Remove
                 st.rerun()
