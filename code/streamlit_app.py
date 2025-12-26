@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-# Deploy Trigger: V4.1 - Pure JS localStorage via components.html() (no websocket lib)
+# Deploy Trigger: V4.2 - Use st.markdown for JS injection (main page context, not iframe)
 import streamlit.components.v1 as components
 from PIL import Image
 
@@ -46,10 +46,10 @@ if "markdown_report" not in st.session_state:
 if "keys_loaded_from_storage" not in st.session_state:
     st.session_state.keys_loaded_from_storage = False
 
-# --- LOCALSTORAGE KEY PERSISTENCE (PURE JS APPROACH) ---
-# The websocket-based localStorage is async and unreliable.
-# Solution: Use JavaScript injection via st.components.html() for all localStorage operations.
-# 1. On save: Inject <script> that immediately saves to localStorage
+# --- LOCALSTORAGE KEY PERSISTENCE (MAIN PAGE JS INJECTION) ---
+# components.html() runs in an iframe with cross-origin restrictions.
+# Solution: Use st.markdown() with unsafe_allow_html - injects directly into main page.
+# 1. On save: Inject <script> via st.markdown that saves to localStorage
 # 2. On load: Inject JS bouncer that checks localStorage and redirects with URL params
 # 3. Python reads from URL params (synchronous)
 
@@ -57,23 +57,23 @@ if "keys_loaded_from_storage" not in st.session_state:
 STORAGE_PREFIX = "ca_scribe_"
 
 def save_keys_to_localstorage(google_key="", groq_key="", github_token=""):
-    """Save API keys to browser localStorage using direct JS injection."""
+    """Save API keys to browser localStorage using st.markdown JS injection."""
     # Build JavaScript to save keys
     js_parts = []
     if google_key:
-        escaped_key = google_key.replace("\\", "\\\\").replace("'", "\\'")
-        js_parts.append(f"localStorage.setItem('{STORAGE_PREFIX}google_key', '{escaped_key}');")
+        escaped_key = google_key.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
+        js_parts.append(f'localStorage.setItem("{STORAGE_PREFIX}google_key", "{escaped_key}");')
     if groq_key:
-        escaped_key = groq_key.replace("\\", "\\\\").replace("'", "\\'")
-        js_parts.append(f"localStorage.setItem('{STORAGE_PREFIX}groq_key', '{escaped_key}');")
+        escaped_key = groq_key.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
+        js_parts.append(f'localStorage.setItem("{STORAGE_PREFIX}groq_key", "{escaped_key}");')
     if github_token:
-        escaped_key = github_token.replace("\\", "\\\\").replace("'", "\\'")
-        js_parts.append(f"localStorage.setItem('{STORAGE_PREFIX}github_token', '{escaped_key}');")
+        escaped_key = github_token.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
+        js_parts.append(f'localStorage.setItem("{STORAGE_PREFIX}github_token", "{escaped_key}");')
     
     if js_parts:
-        js_code = "\n".join(js_parts)
-        # Use components.html to inject script - runs in main page context
-        components.html(f"""
+        js_code = "\n                        ".join(js_parts)
+        # Use st.markdown with unsafe_allow_html - injects into MAIN PAGE context
+        st.markdown(f"""
             <script>
                 (function() {{
                     try {{
@@ -84,7 +84,7 @@ def save_keys_to_localstorage(google_key="", groq_key="", github_token=""):
                     }}
                 }})();
             </script>
-        """, height=0)
+        """, unsafe_allow_html=True)
 
 def load_keys_from_url_params():
     """Load API keys from URL params (set by JS bouncer from localStorage)."""
