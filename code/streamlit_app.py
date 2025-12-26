@@ -158,20 +158,32 @@ def show_setup_page():
                 background-size: contain;
                 background-repeat: no-repeat;
             }
-            /* Initialize button hover - dark blue background, white text */
-            [data-testid="stForm"] button[kind="primary"]:hover {
+            /* Initialize button hover - dark blue background (#003B5C), white text */
+            [data-testid="stForm"] button[kind="primary"]:hover,
+            [data-testid="stForm"] [data-testid="stFormSubmitButton"] button:hover {
                 background: #003B5C !important;
+                background-color: #003B5C !important;
                 color: white !important;
+                border-color: #003B5C !important;
             }
             /* Hide 'Press Enter to submit' message */
             [data-testid="stForm"] .stTextInput [data-testid="InputInstructions"] {
                 display: none !important;
             }
-            /* Sky blue focus for input boxes with glow */
+            /* Sky blue focus for input boxes with glow - inner input */
             [data-testid="stForm"] .stTextInput input:focus {
                 border-color: #38bdf8 !important;
                 box-shadow: 0 0 15px rgba(56, 189, 248, 0.5) !important;
                 outline: none !important;
+            }
+            /* Sky blue focus for outer input container (with eye icon) */
+            [data-testid="stForm"] .stTextInput > div:focus-within {
+                border-color: #38bdf8 !important;
+                box-shadow: 0 0 15px rgba(56, 189, 248, 0.5) !important;
+            }
+            [data-testid="stForm"] .stTextInput [data-baseweb="input"]:focus-within {
+                border-color: #38bdf8 !important;
+                box-shadow: 0 0 15px rgba(56, 189, 248, 0.5) !important;
             }
             </style>
             <div style="text-align: center; margin-bottom: 2.5rem; margin-top: 2vh;">
