@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-# Deploy Trigger: V4.0 - Hybrid localStorage with JS bouncer and URL params bridge
+# Deploy Trigger: V4.1 - Pure JS localStorage via components.html() (no websocket lib)
 import streamlit.components.v1 as components
 from PIL import Image
 
@@ -46,32 +46,45 @@ if "markdown_report" not in st.session_state:
 if "keys_loaded_from_storage" not in st.session_state:
     st.session_state.keys_loaded_from_storage = False
 
-# --- LOCALSTORAGE KEY PERSISTENCE (HYBRID APPROACH) ---
-# The websocket-based localStorage read is async and has a race condition.
-# Solution: Use URL params as a synchronous bridge from browser to Python.
-# 1. On save: Use streamlit-ws-localstorage to store keys
-# 2. On load: Inject JS that checks localStorage immediately and redirects with URL params
-# 3. Python reads from URL params (synchronous) and cleans up
-
-from streamlit_ws_localstorage import injectWebsocketCode, getOrCreateUID
+# --- LOCALSTORAGE KEY PERSISTENCE (PURE JS APPROACH) ---
+# The websocket-based localStorage is async and unreliable.
+# Solution: Use JavaScript injection via st.components.html() for all localStorage operations.
+# 1. On save: Inject <script> that immediately saves to localStorage
+# 2. On load: Inject JS bouncer that checks localStorage and redirects with URL params
+# 3. Python reads from URL params (synchronous)
 
 # Storage configuration  
 STORAGE_PREFIX = "ca_scribe_"
 
-# Inject websocket code for localStorage WRITE operations
-conn = injectWebsocketCode(hostPort='', uid=getOrCreateUID())
-
 def save_keys_to_localstorage(google_key="", groq_key="", github_token=""):
-    """Save API keys to browser localStorage."""
-    try:
-        if google_key:
-            conn.setLocalStorageVal(f"{STORAGE_PREFIX}google_key", google_key)
-        if groq_key:
-            conn.setLocalStorageVal(f"{STORAGE_PREFIX}groq_key", groq_key)
-        if github_token:
-            conn.setLocalStorageVal(f"{STORAGE_PREFIX}github_token", github_token)
-    except Exception as e:
-        print(f"localStorage save error: {e}")
+    """Save API keys to browser localStorage using direct JS injection."""
+    # Build JavaScript to save keys
+    js_parts = []
+    if google_key:
+        escaped_key = google_key.replace("\\", "\\\\").replace("'", "\\'")
+        js_parts.append(f"localStorage.setItem('{STORAGE_PREFIX}google_key', '{escaped_key}');")
+    if groq_key:
+        escaped_key = groq_key.replace("\\", "\\\\").replace("'", "\\'")
+        js_parts.append(f"localStorage.setItem('{STORAGE_PREFIX}groq_key', '{escaped_key}');")
+    if github_token:
+        escaped_key = github_token.replace("\\", "\\\\").replace("'", "\\'")
+        js_parts.append(f"localStorage.setItem('{STORAGE_PREFIX}github_token', '{escaped_key}');")
+    
+    if js_parts:
+        js_code = "\n".join(js_parts)
+        # Use components.html to inject script - runs in main page context
+        components.html(f"""
+            <script>
+                (function() {{
+                    try {{
+                        {js_code}
+                        console.log('CA Scribe: Keys saved to localStorage');
+                    }} catch(e) {{
+                        console.error('CA Scribe localStorage save error:', e);
+                    }}
+                }})();
+            </script>
+        """, height=0)
 
 def load_keys_from_url_params():
     """Load API keys from URL params (set by JS bouncer from localStorage)."""
