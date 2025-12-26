@@ -472,7 +472,7 @@ def show_main_page():
                     <span class="logo-main" style="font-size: 2.75rem;">CA</span>
                     <span class="logo-scribe" style="font-size: 2.75rem; position: relative;">
                         Scribe 
-                        <span style="position: absolute; top: -85px; right: -28px;">
+                        <span style="position: absolute; top: -5px; right: -28px;">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <g transform="rotate(10 12 12)">
                                     <path d="M24 12.024c-6.437.388-11.59 5.539-11.977 11.976h-.047C11.588 17.563 6.436 12.412 0 12.024v-.047C6.437 11.588 11.588 6.437 11.976 0h.047c.388 6.437 5.54 11.588 11.977 11.977z" fill="#0ea5e9"/>
@@ -886,7 +886,9 @@ def show_main_page():
 
             # 1. ENTRY PHASE: Show            # 1. Display ENTRY Animation IMMEDIATELY
             with content_area.container():
-                components.html(get_loading_html("ENTRY"), height=370)
+                # Hide iframe border with custom styling
+                st.markdown('<style>iframe { border: none !important; }</style>', unsafe_allow_html=True)
+                components.html(get_loading_html("ENTRY"), height=370, scrolling=False)
             
             # Yield to UI for render
             time.sleep(0.5) 
@@ -901,7 +903,8 @@ def show_main_page():
                 
                 # 2. EXIT PHASE: Explode
                 with content_area.container():
-                    components.html(get_loading_html("EXIT"), height=370)
+                    st.markdown('<style>iframe { border: none !important; }</style>', unsafe_allow_html=True)
+                    components.html(get_loading_html("EXIT"), height=370, scrolling=False)
                 
                 time.sleep(1.3) # Match the 1.2s fade-out animation
                 
