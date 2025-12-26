@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-# Deploy Trigger: V3.4 - SECURITY FIX: Remove secrets auto-load
+# Deploy Trigger: V3.5 - SECURITY: Remove all secrets.toml file writes
 import streamlit.components.v1 as components
 from PIL import Image
 
@@ -213,7 +213,7 @@ def show_setup_page():
             st.markdown("""
                 <div style="text-align: center; margin: 0.5rem 0 0.5rem 0;">
                     <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 500;">
-                        Keys are stored locally in .streamlit/secrets.toml
+                        Keys are stored in your browser session only
                     </span>
                 </div>
             """, unsafe_allow_html=True)
@@ -227,18 +227,7 @@ def show_setup_page():
                     if g_key: st.session_state["GOOGLE_API_KEY"] = g_key
                     if q_key: st.session_state["GROQ_API_KEY"] = q_key
                     if gh_key: st.session_state["GITHUB_TOKEN"] = gh_key
-                    
-                    # Persist to local secrets
-                    try:
-                        secrets_path = os.path.join(os.getcwd(), ".streamlit", "secrets.toml")
-                        os.makedirs(os.path.dirname(secrets_path), exist_ok=True)
-                        with open(secrets_path, "w") as f:
-                            f.write(f'GOOGLE_API_KEY = "{g_key}"\n')
-                            f.write(f'GROQ_API_KEY = "{q_key}"\n')
-                            f.write(f'GITHUB_TOKEN = "{gh_key}"\n')
-                    except Exception:
-                        pass 
-                        
+                    # Keys stored in session_state only (per-user, not persisted)
                     st.rerun()
 
             # Helper Link
@@ -356,17 +345,7 @@ def render_settings_page():
                 if g_key: st.session_state["GOOGLE_API_KEY"] = g_key
                 if q_key: st.session_state["GROQ_API_KEY"] = q_key
                 if gh_key: st.session_state["GITHUB_TOKEN"] = gh_key
-                
-                # Persist to secrets
-                try:
-                    secrets_path = os.path.join(os.getcwd(), ".streamlit", "secrets.toml")
-                    os.makedirs(os.path.dirname(secrets_path), exist_ok=True)
-                    with open(secrets_path, "w") as f:
-                        if g_key: f.write(f'GOOGLE_API_KEY = "{g_key}"\n')
-                        if q_key: f.write(f'GROQ_API_KEY = "{q_key}"\n')
-                        if gh_key: f.write(f'GITHUB_TOKEN = "{gh_key}"\n')
-                except Exception:
-                    pass
+                # Keys stored in session_state only (per-user, not persisted)
                 
                 st.session_state.view_mode = "main"
                 try: st.query_params.clear() 
