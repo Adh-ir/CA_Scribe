@@ -3,7 +3,7 @@ import os
 import sys
 import time
 
-# Deploy Trigger: V5.0 - Use streamlit-local-storage package for proper localStorage
+# Deploy Trigger: V5.1 - Session-only persistence (localStorage blocked on Streamlit Cloud)
 import streamlit.components.v1 as components
 from PIL import Image
 
@@ -46,54 +46,10 @@ if "markdown_report" not in st.session_state:
 if "keys_loaded_from_storage" not in st.session_state:
     st.session_state.keys_loaded_from_storage = False
 
-# --- LOCALSTORAGE KEY PERSISTENCE (streamlit-local-storage package) ---
-# The streamlit-local-storage package handles the iframe sandbox issues properly.
-# It uses postMessage to communicate between iframe and parent window.
-from streamlit_local_storage import LocalStorage
-
-# Storage configuration  
-STORAGE_PREFIX = "ca_scribe_"
-localS = LocalStorage()
-
-def save_keys_to_localstorage(google_key="", groq_key="", github_token=""):
-    """Save API keys to browser localStorage."""
-    if google_key:
-        localS.setItem(f"{STORAGE_PREFIX}google_key", google_key)
-    if groq_key:
-        localS.setItem(f"{STORAGE_PREFIX}groq_key", groq_key)
-    if github_token:
-        localS.setItem(f"{STORAGE_PREFIX}github_token", github_token)
-
-def load_keys_from_localstorage():
-    """Load API keys from browser localStorage into session state."""
-    try:
-        loaded = False
-        
-        gkey = localS.getItem(f"{STORAGE_PREFIX}google_key")
-        qkey = localS.getItem(f"{STORAGE_PREFIX}groq_key")
-        ghkey = localS.getItem(f"{STORAGE_PREFIX}github_token")
-        
-        if gkey and not st.session_state.get("GOOGLE_API_KEY"):
-            st.session_state["GOOGLE_API_KEY"] = gkey
-            loaded = True
-        if qkey and not st.session_state.get("GROQ_API_KEY"):
-            st.session_state["GROQ_API_KEY"] = qkey
-            loaded = True
-        if ghkey and not st.session_state.get("GITHUB_TOKEN"):
-            st.session_state["GITHUB_TOKEN"] = ghkey
-            loaded = True
-            
-        return loaded
-    except Exception as e:
-        print(f"LocalStorage load error: {e}")
-        return False
-
-# Load keys from localStorage on startup
-if not st.session_state.keys_loaded_from_storage:
-    if load_keys_from_localstorage():
-        st.session_state.keys_loaded_from_storage = True
-        st.rerun()
-    st.session_state.keys_loaded_from_storage = True
+# --- API KEY PERSISTENCE ---
+# Note: Browser localStorage is not supported on Streamlit Cloud due to iframe
+# sandbox restrictions. Keys persist in session state during the browser session.
+# For production, use st.secrets for server-side key management.
 
 # Force global styles immediately
 st.markdown(GLOBAL_HACKS_CSS, unsafe_allow_html=True)
@@ -279,8 +235,6 @@ def show_setup_page():
                     if g_key: st.session_state["GOOGLE_API_KEY"] = g_key
                     if q_key: st.session_state["GROQ_API_KEY"] = q_key
                     if gh_key: st.session_state["GITHUB_TOKEN"] = gh_key
-                    # Save keys to browser localStorage
-                    save_keys_to_localstorage(g_key or "", q_key or "", gh_key or "")
                     st.rerun()
 
             # Helper Link
@@ -398,8 +352,6 @@ def render_settings_page():
                 if g_key: st.session_state["GOOGLE_API_KEY"] = g_key
                 if q_key: st.session_state["GROQ_API_KEY"] = q_key
                 if gh_key: st.session_state["GITHUB_TOKEN"] = gh_key
-                # Save keys to browser localStorage
-                save_keys_to_localstorage(g_key or "", q_key or "", gh_key or "")
                 
                 st.session_state.view_mode = "main"
                 try: st.query_params.clear() 

@@ -12,4 +12,4 @@ openai
 # (data-testid attributes, emotion-cache classes, container hierarchy)
 # Test thoroughly before upgrading
 streamlit==1.52.2
-streamlit-local-storage
+
