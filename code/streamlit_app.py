@@ -69,6 +69,12 @@ if "loading_complete" not in st.session_state:
 
 
 
+# Create a cached wrapper to prevent re-loading on every session
+# cache_data is preferred for pickleable data objects (dicts/lists)
+@st.cache_data(show_spinner=False, ttl=24*3600)
+def get_cached_framework_data():
+    return load_competency_framework()
+
 if not st.session_state.loading_complete:
     # Use a placeholder for the animation to allow clearing it without a rerun
     loading_placeholder = st.empty()
@@ -85,7 +91,8 @@ if not st.session_state.loading_complete:
         # Perform expensive loading HERE while animation is running on frontend
         if st.session_state.framework_data is None:
             try:
-                st.session_state.framework_data = load_competency_framework()
+                # Use cached version instead of direct call
+                st.session_state.framework_data = get_cached_framework_data()
             except Exception as e:
                 print(f"Background Loading Failed: {e}")
                 # Ensure we don't crash, let the app proceed (it might handle None later or retry)
