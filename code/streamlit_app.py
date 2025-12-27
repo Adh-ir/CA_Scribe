@@ -910,8 +910,8 @@ def show_main_page():
                 # Mark as done and show report
                 st.session_state.run_analysis = False
                 time.sleep(0.5)  # Brief pause to let animation complete
-                st.rerun()
-                st.stop()  # Ensure no further rendering
+                # st.rerun()  <-- CAUSES DUPLICATION on Cloud
+                # st.stop()   <-- Removed to allow fall-through to render report
                 
             except Exception as e:
                 content_area.empty()
