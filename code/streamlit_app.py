@@ -70,33 +70,37 @@ if "loading_complete" not in st.session_state:
 
 
 if not st.session_state.loading_complete:
-    # Fullscreen iframe hack & PADDING OVERRIDE
-    st.markdown(LOADING_MODE_CSS, unsafe_allow_html=True)
-    
-    # Render Animation
-    components.html(LOADING_HTML, height=800)
-    
-    # --- BACKGROUND LOADING START ---
-    t_start = time.time()
-    
-    # Perform expensive loading HERE while animation is running on frontend
-    if st.session_state.framework_data is None:
-        try:
-            st.session_state.framework_data = load_competency_framework()
-        except Exception as e:
-            print(f"Background Loading Failed: {e}")
-            # Ensure we don't crash, let the app proceed (it might handle None later or retry)
-            st.session_state.framework_data = None
+    # Use a placeholder for the animation to allow clearing it without a rerun
+    loading_placeholder = st.empty()
+    with loading_placeholder.container():
+        # Fullscreen iframe hack & PADDING OVERRIDE
+        st.markdown(LOADING_MODE_CSS, unsafe_allow_html=True)
         
-    # Wait remaining time (Total 8.5s)
-    elapsed = time.time() - t_start
-    remaining = 8.5 - elapsed
-    if remaining > 0:
-        time.sleep(remaining)
-    # --- BACKGROUND LOADING END ---
+        # Render Animation
+        components.html(LOADING_HTML, height=800)
     
+        # --- BACKGROUND LOADING START ---
+        t_start = time.time()
+        
+        # Perform expensive loading HERE while animation is running on frontend
+        if st.session_state.framework_data is None:
+            try:
+                st.session_state.framework_data = load_competency_framework()
+            except Exception as e:
+                print(f"Background Loading Failed: {e}")
+                # Ensure we don't crash, let the app proceed (it might handle None later or retry)
+                st.session_state.framework_data = None
+            
+        # Wait remaining time (Total 8.5s)
+        elapsed = time.time() - t_start
+        remaining = 8.5 - elapsed
+        if remaining > 0:
+            time.sleep(remaining)
+        # --- BACKGROUND LOADING END ---
+    
+    # Clear the animation and proceed immediately
+    loading_placeholder.empty()
     st.session_state.loading_complete = True
-    st.rerun()
 
 # --- APP START ---
 
@@ -593,7 +597,6 @@ def show_main_page():
             else:
                 # Set flag to trigger analysis in right panel
                 st.session_state.run_analysis = True
-                st.rerun()
 
     # --- RIGHT PANEL (Report) ---
     with main_col2:
